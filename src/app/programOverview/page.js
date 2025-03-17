@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle, Clock, Signal } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
@@ -8,8 +9,8 @@ import Sidebar from "@/components/Sidebar";
 const TrainCard = ({ title, author, level, duration, image, route }) => {
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-transform hover:scale-105">
-      <div className="relative">
-        <img src={image} alt="Materi" className="w-full h-40 object-cover" />
+      <div className="relative w-full h-40">
+        <Image src={image} alt="Materi" layout="fill" objectFit="cover" />
       </div>
       <div className="p-4 flex flex-col">
         <div className="flex items-center gap-1 text-gray-700 text-sm">

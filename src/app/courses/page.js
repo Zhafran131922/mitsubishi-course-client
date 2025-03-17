@@ -1,6 +1,7 @@
 import React from "react";
+import Image from "next/image";
 import QuizSection from "@/components/CourseSection";
-import Sidebar from "../../components/Sidebar";
+import Sidebar from "@/components/Sidebar";
 
 const courseContents = [
   "01: Lorem Ipsum",
@@ -38,12 +39,12 @@ const Courses = () => {
             </h1>
             <div className="flex gap-4 mt-2 flex-wrap">
               <div className="flex items-center">
-                <img src="/assets/level.png" alt="Level" className="w-6 mr-2" />
-                <p className="text-gray-600">Beginner</p>
+                <Image src="/assets/level.png" alt="Level" width={24} height={24} />
+                <p className="text-gray-600 ml-2">Beginner</p>
               </div>
               <div className="flex items-center">
-                <img src="/assets/time.png" alt="Time" className="w-6 mr-2" />
-                <p className="text-gray-600">7.02 Menit</p>
+                <Image src="/assets/time.png" alt="Time" width={24} height={24} />
+                <p className="text-gray-600 ml-2">7.02 Menit</p>
               </div>
             </div>
           </div>
@@ -52,12 +53,8 @@ const Courses = () => {
               Share
             </button>
             <button className="flex items-center bg-red-700 text-white text-sm sm:text-base px-3 sm:px-4 py-1 sm:py-2 font-bold rounded-lg">
-              <img
-                src="/assets/done.png"
-                alt="Mark As Done"
-                className="w-4 sm:w-5 mr-2"
-              />
-              Mark As Done
+              <Image src="/assets/done.png" alt="Mark As Done" width={20} height={20} />
+              <span className="ml-2">Mark As Done</span>
             </button>
           </div>
         </div>

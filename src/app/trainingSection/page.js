@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import Sidebar from "../../components/Sidebar";
+import Sidebar from "@/components/Sidebar";
 import Calendar from "@/components/Calendar";
-import TrainCards from "../../components/TrainCards";
-import Footer from "../../components/Footer";
+import TrainCards from "@/components/TrainCards";
+import Footer from "@/components/Footer";
 
 export default function TrainingSection() {
   const images = ["/assets/car1.jpg", "/assets/car2.jpg", "/assets/car3.jpg"];

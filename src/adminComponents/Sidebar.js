@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { FaFilm, FaClipboardList, FaHeadset, FaInfoCircle } from "react-icons/fa";
 import Profile from "../components/Profile";
@@ -12,10 +13,10 @@ const Sidebar = () => {
     <div className="w-64 h-screen bg-black text-white fixed left-0 top-0 flex flex-col items-center py-6">
       {/* Logo */}
       <div className="mt-4">
-        <img src="/assets/logo.png" alt="Next Icon" className="w-10 h-10" />
+        <Image src="/assets/logo.png" alt="Next Icon" width={40} height={40} />
       </div>
       <div className="mt-2">
-        <img src="/assets/textLogo.png" alt="Mitsubishi Logo" className="w-24" />
+        <Image src="/assets/textLogo.png" alt="Mitsubishi Logo" width={96} height={40} />
       </div>
 
       {/* User Profile */}

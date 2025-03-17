@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Image from "next/image";
 import { FaChevronDown } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -16,10 +17,12 @@ const Profile = () => {
         className="flex items-center bg-black border-2 border-white rounded-full px-4 py-2 cursor-pointer"
         onClick={toggleDropdown}
       >
-        <img
+        <Image
           src="https://randomuser.me/api/portraits/women/44.jpg"
           alt="User"
-          className="w-10 h-10 rounded-full border-2 border-white mr-3"
+          width={40}
+          height={40}
+          className="rounded-full border-2 border-white mr-3"
         />
         <span className="text-white font-bold text-lg mr-2">User15</span>
         <FaChevronDown className="text-white" />
@@ -39,7 +42,7 @@ const Profile = () => {
               className="flex items-center w-full px-4 py-2 text-white hover:bg-red-500"
               onClick={() => alert("Edit Profile clicked")}
             >
-              <img src="/assets/edit.png" alt="Edit" className="w-5 h-5 mr-2" />
+              <Image src="/assets/edit.png" alt="Edit" width={20} height={20} className="mr-2" />
               Edit Profile
             </button>
 
@@ -48,7 +51,7 @@ const Profile = () => {
               className="flex items-center w-full px-4 py-2 text-white hover:bg-red-500"
               onClick={() => alert("Logout clicked")}
             >
-              <img src="/assets/logout.png" alt="Logout" className="w-5 h-5 mr-2" />
+              <Image src="/assets/logout.png" alt="Logout" width={20} height={20} className="mr-2" />
               Logout
             </button>
           </motion.div>

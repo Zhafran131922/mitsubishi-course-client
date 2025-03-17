@@ -3,8 +3,11 @@
 import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { FaBars, FaTimes, FaFilm, FaClipboardList, FaHeadset, FaInfoCircle } from "react-icons/fa";
 import Profile from "../components/Profile";
+import Logo from "../../public/assets/logo.png";
+import TextLogo from "../../public/assets/textLogo.png";
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -20,10 +23,10 @@ const Sidebar = () => {
       <div className="hidden 2xl:flex flex-col w-64 h-screen bg-black text-white fixed left-0 top-0 py-6 items-center">
         {/* Logo */}
         <div className="mt-4">
-          <img src="/assets/logo.png" alt="Next Icon" className="w-10 h-10" />
+          <Image src={Logo} alt="Next Icon" width={40} height={40} />
         </div>
         <div className="mt-2">
-          <img src="/assets/textLogo.png" alt="Mitsubishi Logo" className="w-24" />
+          <Image src={TextLogo} alt="Mitsubishi Logo" width={96} height={40} />
         </div>
 
         {/* User Profile */}
@@ -79,7 +82,7 @@ const Sidebar = () => {
       {/* Navbar untuk layar kecil */}
       <div className="2xl:hidden flex items-center justify-between bg-black text-white p-4 fixed w-full top-0 left-0 z-50">
         <button onClick={toggleSidebar} className="focus:outline-none">
-          <img src="/assets/logo.png" alt="Mitsubishi Logo" className="w-10 h-10" />
+          <Image src="/assets/logo.png" alt="Mitsubishi Logo" width={40} height={40} />
         </button>
       </div>
 
@@ -99,10 +102,10 @@ const Sidebar = () => {
 
           {/* Logo */}
           <div className="mt-4">
-            <img src="/assets/logo.png" alt="Next Icon" className="w-10 h-10" />
+            <Image src="/assets/logo.png" alt="Next Icon" width={40} height={40} />
           </div>
           <div className="mt-2">
-            <img src="/assets/textLogo.png" alt="Mitsubishi Logo" className="w-24" />
+            <Image src="/assets/textLogo.png" alt="Mitsubishi Logo" width={96} height={40} />
           </div>
 
           {/* User Profile */}
@@ -147,13 +150,6 @@ const Sidebar = () => {
               About Us
             </a>
           </nav>
-
-          {/* Footer */}
-          <div className="absolute bottom-6 text-center text-xs">
-            <p>MITSUBISHI TRAINING CENTER</p>
-            <span>© All Rights Reserved</span>
-            <p>Made With ❤️ By Wahyudi</p>
-          </div>
         </motion.div>
       )}
     </>

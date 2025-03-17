@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { CheckCircle, Clock, Signal } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -11,8 +12,8 @@ const TrainCard = ({ title, author, level, duration, image, route }) => {
       transition={{ duration: 0.5 }}
       className="bg-white rounded-xl shadow-lg overflow-hidden"
     >
-      <div className="relative">
-        <img src={image} alt="Materi" className="w-full h-48 object-cover" />
+      <div className="relative w-full h-48">
+        <Image src={image} alt="Materi" layout="fill" objectFit="cover" />
       </div>
       <div className="p-4 flex flex-col">
         <div className="flex items-center gap-1 text-gray-700 text-sm">
@@ -49,7 +50,6 @@ const CardsContainer = () => {
     { title: "Machine Learning Fundamentals", author: "Tri", level: "Intermediate", duration: "120 Menit", image: "/assets/car2.jpg", route: "/courses" },
     { title: "Deep Learning Essentials", author: "Agus", level: "Advanced", duration: "180 Menit", image: "/assets/car3.jpg", route: "/courses" },
     { title: "Neural Networks Explained", author: "Mas", level: "Beginner", duration: "75 Menit", image: "/assets/car1.jpg", route: "/courses" },
-   
   ];
 
   const [showAll, setShowAll] = useState(false);
@@ -67,7 +67,7 @@ const CardsContainer = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setShowAll(true)}
-            className="bg-transparent  text-white underline py-2 px-4 rounded-md font-medium hover:text-bold transition"
+            className="bg-transparent text-white underline py-2 px-4 rounded-md font-medium hover:text-bold transition"
           >
             View More
           </motion.button>
@@ -76,7 +76,7 @@ const CardsContainer = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setShowAll(false)}
-            className="bg-transparent  text-white underline py-2 px-4 rounded-md font-medium hover:text-bold transition"
+            className="bg-transparent text-white underline py-2 px-4 rounded-md font-medium hover:text-bold transition"
           >
             Show Less
           </motion.button>

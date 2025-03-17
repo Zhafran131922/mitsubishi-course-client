@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { Mail, MapPin, Phone, Heart } from "lucide-react";
 
 const Footer = () => {
@@ -7,12 +8,14 @@ const Footer = () => {
       <div className="container mx-auto text-center px-4">
         {/* Logo */}
         <div className="flex justify-center items-center mb-4">
-          <img
+          <Image
             src="/assets/logo.png"
             alt="Mitsubishi Logo"
-            className="h-10 mr-2"
+            width={40}
+            height={40}
+            className="h-10 w-auto"
           />
-          <h2 className="text-xl font-bold italic">
+          <h2 className="text-xl font-bold italic ml-2">
             MITSUBISHI TRAINING CENTER
           </h2>
         </div>
@@ -28,24 +31,30 @@ const Footer = () => {
         {/* Social Icons */}
         <div className="flex justify-center space-x-4 mb-6">
           <div className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-500 hover:bg-gray-700 cursor-pointer">
-            <img
+            <Image
               src="/assets/instagram.png"
               alt="Instagram"
-              className="h-5"
+              width={20}
+              height={20}
+              className="h-5 w-auto"
             />
           </div>
           <div className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-500 hover:bg-gray-700 cursor-pointer">
-            <img
+            <Image
               src="/assets/twitter.png"
               alt="Twitter"
-              className="h-5"
+              width={20}
+              height={20}
+              className="h-5 w-auto"
             />
           </div>
           <div className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-500 hover:bg-gray-700 cursor-pointer">
-            <img
+            <Image
               src="/assets/youtube.png"
-              alt="YTube"
-              className="h-5"
+              alt="YouTube"
+              width={20}
+              height={20}
+              className="h-5 w-auto"
             />
           </div>
         </div>
