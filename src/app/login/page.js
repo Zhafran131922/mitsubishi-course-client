@@ -1,24 +1,26 @@
-"use client";
+"use client"; // Menandakan ini adalah client component
+
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 
 export default function Login() {
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [text, setText] = useState("");
+  
   const fullText = "Welcome to Mitsubishi Training Center";
   const typingSpeed = 50; // Kecepatan mengetik (ms)
 
   useEffect(() => {
     let i = 0;
     const interval = setInterval(() => {
-      if (i < fullText.length) {
-        setText(fullText.slice(0, i + 1)); 
-        i++;
-      } else {
-        clearInterval(interval);
-      }
+      setText(fullText.slice(0, i + 1));
+      i++;
+      if (i > fullText.length) clearInterval(interval);
     }, typingSpeed);
 
     return () => clearInterval(interval);
@@ -33,18 +35,17 @@ export default function Login() {
     <div className="flex items-center justify-center min-h-screen bg-black">
       {/* Wrapper untuk menjaga posisi login box tetap di tengah */}
       <div className="relative w-96">
-        {/* Logo (Tetap di atas login box) */}
-        <motion.img
-          src="/assets/logo.png"
-          alt="Logo"
-          width={80}
-          height={80}
+        {/* Logo (Gunakan motion.div untuk animasi) */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 1 }} 
           className="absolute top-[-140px] left-1/2 transform -translate-x-1/2"
-          initial={{ opacity: 0, y: -20 }} // Mulai dari opacity 0 dan posisi sedikit ke atas
-          animate={{ opacity: 1, y: 0 }} // Opacity penuh dan kembali ke posisi normal
-          transition={{ duration: 1 }} // Durasi animasi 1 detik
-        />
+        >
+          <Image src="/assets/logo.png" alt="Logo" width={80} height={80} priority />
+        </motion.div>
 
+        {/* Animasi teks */}
         <motion.h1
           className="absolute top-[-60px] left-1/2 transform -translate-x-1/2 text-white text-xl font-semibold text-center whitespace-nowrap"
           initial={{ opacity: 0 }}
@@ -62,6 +63,8 @@ export default function Login() {
               <label className="block text-sm font-medium">Email</label>
               <input
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-2 mt-1 bg-white/20 border border-white/30 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-white/50"
                 placeholder="Enter your email"
                 required
@@ -71,6 +74,8 @@ export default function Login() {
               <label className="block text-sm font-medium">Password</label>
               <input
                 type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-2 mt-1 bg-white/20 border border-white/30 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-white/50"
                 placeholder="Enter your password"
                 required
@@ -85,9 +90,9 @@ export default function Login() {
           </form>
           <p className="text-center text-sm mt-4">
             Don't have an account?{" "}
-            <a href="#" className="underline">
+            <Link href="/contact-admin" className="underline">
               Contact Admin
-            </a>
+            </Link>
           </p>
         </div>
       </div>
