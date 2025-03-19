@@ -4,7 +4,7 @@ import React from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { FaFilm, FaClipboardList, FaHeadset, FaInfoCircle } from "react-icons/fa";
-import Profile from "../components/Profile";
+import Profile from "../adminComponents/Profile";
 
 const Sidebar = () => {
   const pathname = usePathname(); 
@@ -19,33 +19,31 @@ const Sidebar = () => {
         <Image src="/assets/textLogo.png" alt="Mitsubishi Logo" width={96} height={40} />
       </div>
 
-      {/* User Profile */}
-      <Profile /> {/* Komponen Profile */}
-
+      <Profile /> 
       {/* Menu Items */}
       <nav className="w-full mt-6">
         <a
-          href="/program"
-          className={`flex items-center px-6 py-3 font-semibold ${
-            pathname === "/program" ? "bg-[#A70000] text-white" : "text-white hover:bg-red-700"
-          }`}
-        >
-          <FaFilm className="mr-3" />
-          Program
-        </a>
-        <a
-          href="/agenda"
+          href="/adminAgenda"
           className={`flex items-center px-6 py-3 ${
-            pathname === "/agenda" ? "bg-[#A70000] text-white" : "text-white hover:bg-red-700"
+            pathname === "/adminAgenda" ? "bg-[#A70000] text-white" : "text-white hover:bg-red-700"
           }`}
         >
           <FaClipboardList className="mr-3" />
           Agenda
         </a>
         <a
-          href="/material"
+          href="/adminProgram"
           className={`flex items-center px-6 py-3 ${
-            pathname === "/material" ? "bg-[#A70000] text-white" : "text-white hover:bg-red-700"
+            pathname === "/adminProgram" ? "bg-[#A70000] text-white" : "text-white hover:bg-red-700"
+          }`}
+        >
+          <FaFilm className="mr-3" />
+          Program
+        </a>
+        <a
+          href="/adminMaterial"
+          className={`flex items-center px-6 py-3 ${
+            pathname === "/adminMaterial" ? "bg-[#A70000] text-white" : "text-white hover:bg-red-700"
           }`}
         >
           <FaHeadset className="mr-3" />
