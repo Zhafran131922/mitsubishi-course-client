@@ -10,7 +10,7 @@ const Sidebar = () => {
   const pathname = usePathname(); 
 
   return (
-    <div className="w-64 h-screen bg-black text-white fixed left-0 top-0 flex flex-col items-center py-6">
+    <div className="w-64 h-screen bg-black text-white fixed left-0 top-0 flex flex-col items-center py-6 z-50">
       {/* Logo */}
       <div className="mt-4">
         <Image src="/assets/logo.png" alt="Next Icon" width={40} height={40} />
@@ -25,7 +25,7 @@ const Sidebar = () => {
         <a
           href="/adminAgenda"
           className={`flex items-center px-6 py-3 ${
-            pathname === "/adminAgenda" ? "bg-[#A70000] text-white" : "text-white hover:bg-red-700"
+            pathname === "/adminAgenda" ? "bg-[#A70000] text-white" : "text-white hover:bg-[#A70000]"
           }`}
         >
           <FaClipboardList className="mr-3" />
@@ -34,7 +34,7 @@ const Sidebar = () => {
         <a
           href="/adminProgram"
           className={`flex items-center px-6 py-3 ${
-            pathname === "/adminProgram" ? "bg-[#A70000] text-white" : "text-white hover:bg-red-700"
+            pathname === "/adminProgram" ? "bg-[#A70000] text-white" : "text-white hover:bg-[#A70000]"
           }`}
         >
           <FaFilm className="mr-3" />
@@ -43,7 +43,7 @@ const Sidebar = () => {
         <a
           href="/adminMaterial"
           className={`flex items-center px-6 py-3 ${
-            pathname === "/adminMaterial" ? "bg-[#A70000] text-white" : "text-white hover:bg-red-700"
+            pathname === "/adminMaterial" ? "bg-[#A70000] text-white" : "text-white hover:bg-[#A70000]"
           }`}
         >
           <FaHeadset className="mr-3" />
@@ -52,7 +52,7 @@ const Sidebar = () => {
         <a
           href="/task"
           className={`flex items-center px-6 py-3 ${
-            pathname === "/task" ? "bg-[#A70000] text-white" : "text-white hover:bg-red-700"
+            pathname === "/task" ? "bg-[#A70000] text-white" : "text-white hover:bg-[#A70000]"
           }`}
         >
           <FaInfoCircle className="mr-3" />

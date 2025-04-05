@@ -37,7 +37,7 @@ const Sidebar = () => {
           <a
             href="/trainingSection"
             className={`flex items-center px-6 py-3 font-semibold ${
-              pathname.includes("/trainingSection") || pathname.includes("/courses") ? "bg-[#A70000] text-white" : "text-white hover:bg-red-700"
+              pathname.includes("/trainingSection") || pathname.includes("/courses") ? "bg-[#A70000] text-white" : "text-white hover:bg-[#A70000]"
             }`}
           >
             <FaFilm className="mr-3" />
@@ -46,7 +46,7 @@ const Sidebar = () => {
           <a
             href="/programOverview"
             className={`flex items-center px-6 py-3 ${
-              pathname === "/programOverview" ? "bg-[#A70000] text-white" : "text-white hover:bg-red-700"
+              pathname === "/programOverview" ? "bg-[#A70000] text-white" : "text-white hover:bg-[#A70000]"
             }`}
           >
             <FaClipboardList className="mr-3" />
@@ -55,7 +55,7 @@ const Sidebar = () => {
           <a
             href="/corporateService"
             className={`flex items-center px-6 py-3 ${
-              pathname === "/corporateService" ? "bg-[#A70000] text-white" : "text-white hover:bg-red-700"
+              pathname === "/corporateService" ? "bg-[#A70000] text-white" : "text-white hover:bg-[#A70000]"
             }`}
           >
             <FaHeadset className="mr-3" />
@@ -64,7 +64,7 @@ const Sidebar = () => {
           <a
             href="/about"
             className={`flex items-center px-6 py-3 ${
-              pathname === "/about" ? "bg-[#A70000] text-white" : "text-white hover:bg-red-700"
+              pathname === "/about" ? "bg-[#A70000] text-white" : "text-white hover:bg-[#A70000]"
             }`}
           >
             <FaInfoCircle className="mr-3" />
@@ -116,7 +116,7 @@ const Sidebar = () => {
             <a
               href="/trainingSection"
               className={`flex items-center px-6 py-3 font-semibold ${
-                pathname.includes("/trainingSection") || pathname.includes("/courses") ? "bg-[#A70000] text-white" : "text-white hover:bg-red-700"
+                pathname.includes("/trainingSection") || pathname.includes("/courses") ? "bg-[#A70000] text-white" : "text-white hover:bg-[#A70000]"
               }`}
             >
               <FaFilm className="mr-3" />
@@ -125,7 +125,7 @@ const Sidebar = () => {
             <a
               href="/programOverview"
               className={`flex items-center px-6 py-3 ${
-                pathname === "/programOverview" ? "bg-[#A70000] text-white" : "text-white hover:bg-red-700"
+                pathname === "/programOverview" ? "bg-[#A70000] text-white" : "text-white hover:bg-[#A70000]"
               }`}
             >
               <FaClipboardList className="mr-3" />
@@ -134,7 +134,7 @@ const Sidebar = () => {
             <a
               href="/corporateService"
               className={`flex items-center px-6 py-3 ${
-                pathname === "/corporateService" ? "bg-[#A70000] text-white" : "text-white hover:bg-red-700"
+                pathname === "/corporateService" ? "bg-[#A70000] text-white" : "text-white hover:bg-[#A70000]"
               }`}
             >
               <FaHeadset className="mr-3" />
@@ -143,7 +143,7 @@ const Sidebar = () => {
             <a
               href="/about"
               className={`flex items-center px-6 py-3 ${
-                pathname === "/about" ? "bg-[#A70000] text-white" : "text-white hover:bg-red-700"
+                pathname === "/about" ? "bg-[#A70000] text-white" : "text-white hover:bg-[#A70000]"
               }`}
             >
               <FaInfoCircle className="mr-3" />

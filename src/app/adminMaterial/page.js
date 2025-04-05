@@ -39,7 +39,7 @@ const TrainCard = ({
         </div>
         <div className="mt-4 flex gap-2">
           <Link href={route} className="w-full">
-            <button className="w-full bg-red-600 text-white py-2 rounded-md font-medium hover:bg-red-700 transition">
+            <button className="w-full bg-[#A70000] text-white py-2 rounded-md font-medium hover:bg-red-700 transition">
               Open Course
             </button>
           </Link>
@@ -111,12 +111,12 @@ const AdminMaterial = () => {
         </div>
 
         <button
-          className="px-4 py-2 bg-red-500 text-white rounded-md shadow hover:bg-red-600 transition"
+          className="px-4 py-2 bg-[#A70000] text-white rounded-md shadow hover:bg-red-600 transition"
           onClick={() => setIsModalOpen(true)}
         >
           Add Course
         </button>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mt-6">
           {filteredCourses.map((course, index) => (
             <TrainCard
               key={index}

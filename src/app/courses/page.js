@@ -27,7 +27,7 @@ const Courses = () => {
           <span className="bg-black text-white px-4 py-2 text-sm font-bold transform -skew-x-12">
             ☰ Training Section
           </span>
-          <span className="bg-red-700 text-white px-4 py-2 text-sm font-bold transform -skew-x-12 ml-0">
+          <span className="bg-[#A70000] text-white px-4 py-2 text-sm font-bold transform -skew-x-12 ml-0">
             Materi
           </span>
         </div>
@@ -49,10 +49,10 @@ const Courses = () => {
             </div>
           </div>
           <div className="flex flex-wrap gap-2 sm:gap-4 mt-4 lg:mt-0 justify-end lg:mr-39 xl:mr-0 sm:justify-end w-full">
-            <button className="text-red-700 font-bold text-sm sm:text-base px-3 sm:px-4 py-1 sm:py-2">
+            <button className="text-[#A70000] font-bold text-sm sm:text-base px-3 sm:px-4 py-1 sm:py-2">
               Share
             </button>
-            <button className="flex items-center bg-red-700 text-white text-sm sm:text-base px-3 sm:px-4 py-1 sm:py-2 font-bold rounded-lg">
+            <button className="flex items-center bg-[#A70000] text-white text-sm sm:text-base px-3 sm:px-4 py-1 sm:py-2 font-bold rounded-lg">
               <Image src="/assets/done.png" alt="Mark As Done" width={20} height={20} />
               <span className="ml-2">Mark As Done</span>
             </button>
@@ -72,7 +72,7 @@ const Courses = () => {
           <div className="w-full lg:w-1/3 overflow-hidden">
             <table className="w-full lg:w-55 xl:w-full border border-gray-300">
               <thead>
-                <tr className="bg-red-700 text-white">
+                <tr className="bg-[#A70000] text-white">
                   <th className="p-2">#</th>
                   <th className="p-2">Course Content</th>
                 </tr>

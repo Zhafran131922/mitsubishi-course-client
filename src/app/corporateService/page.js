@@ -22,7 +22,7 @@ const CorporateService = () => {
       </div>
 
       <div className="flex justify-end mt-4 pr-10">
-        <button className="bg-red-600 text-white px-5 py-2 rounded-md flex items-center gap-2 hover:bg-red-700 transition">
+        <button className="bg-[#A70000] text-white px-5 py-2 rounded-md flex items-center gap-2 hover:bg-red-700 transition">
           Start Training <ArrowUpRight size={18} />
         </button>
       </div>
@@ -41,22 +41,22 @@ const CorporateService = () => {
       {/* Service Cards */}
       <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
         <ServiceCard
-          icon={<FileText size={40} className="text-red-600" />}
+          icon={<FileText size={40} className="text-[#A70000]" />}
           title="Lorem Ipsum Dolor"
           description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."
         />
         <ServiceCard
-          icon={<Puzzle size={40} className="text-red-600" />}
+          icon={<Puzzle size={40} className="text-[#A70000]" />}
           title="Lorem Ipsum Dolor"
           description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."
         />
         <ServiceCard
-          icon={<FileText size={40} className="text-red-600" />}
+          icon={<FileText size={40} className="text-[#A70000]" />}
           title="Lorem Ipsum Dolor"
           description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."
         />
         <ServiceCard
-          icon={<Puzzle size={40} className="text-red-600" />}
+          icon={<Puzzle size={40} className="text-[#A70000]" />}
           title="Lorem Ipsum Dolor"
           description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."
         />

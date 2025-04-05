@@ -17,7 +17,7 @@ const AboutUs = () => {
             <Image src="/assets/user.png" alt="User1" width={40} height={40} className="rounded-full" />
             <Image src="/assets/user.png" alt="User2" width={40} height={40} className="rounded-full" />
           </div>
-          <p className="mt-2 text-gray-700">User and User</p>
+          <p className="mt-2 text-gray-700">FE Developer and BE Developer</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl w-full mt-12 items-center">
@@ -44,8 +44,8 @@ const AboutUs = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl w-full mt-8">
           <div className="space-y-6">
             {[1, 2, 3].map((item, index) => (
-              <div key={index} className="border-l-4 border-red-500 pl-4 py-2">
-                <span className="bg-red-500 text-white px-2 py-1 text-xs rounded">{index + 1}</span>
+              <div key={index} className="border-l-4 border-[#A70000] pl-4 py-2">
+                <span className="bg-[#A70000] text-white px-2 py-1 text-xs rounded">{index + 1}</span>
                 <h3 className="text-lg font-semibold mt-2">Lorem Ipsum dolor sit amet</h3>
                 <p className="text-gray-600 mt-1 text-sm sm:text-base">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.

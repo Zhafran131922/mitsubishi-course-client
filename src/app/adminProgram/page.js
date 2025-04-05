@@ -38,7 +38,7 @@ const TrainCard = ({
         </div>
         <div className="mt-4 flex gap-2">
           <Link href={route} className="w-full">
-            <button className="w-full bg-red-600 text-white py-2 rounded-md font-medium hover:bg-red-700 transition">
+            <button className="w-full bg-[#A70000] text-white py-2 rounded-md font-medium hover:bg-red-700 transition">
               Open Programs
             </button>
           </Link>
@@ -113,7 +113,7 @@ const AdminProgram = () => {
           <span className="bg-black text-white px-4 py-2 text-sm font-bold transform -skew-x-12">
             ☰ Admin Page
           </span>
-          <span className="bg-red-700 text-white px-4 py-2 text-sm font-bold transform -skew-x-12 ml-0">
+          <span className="bg-[#A70000] text-white px-4 py-2 text-sm font-bold transform -skew-x-12 ml-0">
             Program
           </span>
         </div>
@@ -125,7 +125,7 @@ const AdminProgram = () => {
           </h1>
           <div className="flex items-center gap-4">
             <button
-              className="px-4 py-2 bg-red-500 text-white rounded-md shadow hover:bg-red-600 transition"
+              className="px-4 py-2 bg-[#A70000] text-white rounded-md shadow hover:bg-red-600 transition"
               onClick={() => setIsModalOpen(true)} // Open modal
             >
               Add Program
@@ -216,7 +216,7 @@ const AdminProgram = () => {
               <div className="flex gap-4">
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-red-500 text-white rounded-md"
+                  className="px-4 py-2 bg-[#A70000] text-white rounded-md"
                 >
                   Add Program
                 </button>

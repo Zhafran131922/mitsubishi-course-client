@@ -32,7 +32,7 @@ const TrainCard = ({ title, author, level, duration, image, route }) => {
           </div>
         </div>
         <Link href={route}>
-          <button className="mt-4 w-full bg-red-600 text-white py-2 rounded-md font-medium hover:bg-red-700 transition">
+          <button className="mt-4 w-full bg-[#A70000] text-white py-2 rounded-md font-medium hover:bg-red-700 transition">
             Buka Materi
           </button>
         </Link>

@@ -149,16 +149,15 @@ const MaterialModal = ({ isOpen, onClose, newProgram, handleInputChange, handleS
             ))}
             <button
               type="button"
-              className="px-4 py-2 bg-green-500 text-white rounded-md mt-2"
+              className="px-4 py-2 bg-[#A70000] text-white rounded-md mt-2"
               onClick={addQuestion}
             >
               + Add Question
             </button>
           </div>
 
-          {/* Buttons */}
           <div className="flex gap-4 mt-6">
-            <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-md">
+            <button type="submit" className="px-4 py-2 bg-[#A70000] text-white rounded-md">
               Save Course
             </button>
             <button type="button" className="px-4 py-2 bg-gray-500 text-white rounded-md" onClick={onClose}>
