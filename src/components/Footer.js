@@ -4,7 +4,7 @@ import { Mail, MapPin, Phone, Heart } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white py-10 w-full mt-20">
+    <footer className="bg-gray-900 text-white py-10 my-20 rounded-lg shadow-xl mx-auto max-w-[1700px] px-[30px] w-full">
       <div className="container mx-auto text-center px-4">
         {/* Logo */}
         <div className="flex justify-center items-center mb-4">

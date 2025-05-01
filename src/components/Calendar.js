@@ -1,138 +1,134 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import React, { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useRouter } from "next/navigation";
 
-export default function Calendar() {
-  const router = useRouter();
-  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-  const [hoveredDate, setHoveredDate] = useState(null);
+const daysOfWeek = ["S", "M", "T", "W", "T", "F", "S"];
 
-  const today = new Date(
-    new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" })
-  );
-  const todayString = `${today.getFullYear()}-${String(
-    today.getMonth() + 1
-  ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+const Calendar = () => {
+  const [currentDate, setCurrentDate] = useState(new Date());
 
-  const trainingSchedule = {
-    "2025-03-05": "React Native Training",
-    "2025-03-10": "Node.js Workshop",
-    "2025-03-20": "DevOps Essentials",
-    "2025-03-25": "Cybersecurity Fundamentals",
+  // Get days in month
+  const getDaysInMonth = (year, month) => {
+    return new Date(year, month + 1, 0).getDate();
   };
 
-  const monthNames = [
-    "Januari",
-    "Februari",
-    "Maret",
-    "April",
-    "Mei",
-    "Juni",
-    "Juli",
-    "Agustus",
-    "September",
-    "Oktober",
-    "November",
-    "Desember",
-  ];
+  const getFirstDayOfMonth = (year, month) => {
+    return new Date(year, month, 1).getDay();
+  };
 
-  const dayNames = ["Ming", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  const daysInMonth = getDaysInMonth(year, month);
+  const firstDayOfMonth = getFirstDayOfMonth(year, month);
 
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+  const days = [];
+
+  for (let i = 0; i < firstDayOfMonth; i++) {
+    days.push(null);
+  }
+
+  // Add days of month
+  for (let i = 1; i <= daysInMonth; i++) {
+    days.push(i);
+  }
 
   const prevMonth = () => {
-    setCurrentMonth((prev) => (prev === 0 ? 11 : prev - 1));
-    if (currentMonth === 0) setCurrentYear((prev) => prev - 1);
+    setCurrentDate(new Date(year, month - 1, 1));
   };
 
   const nextMonth = () => {
-    setCurrentMonth((prev) => (prev === 11 ? 0 : prev + 1));
-    if (currentMonth === 11) setCurrentYear((prev) => prev + 1);
-  };
-
-  const handleDateClick = (date) => {
-    router.push(`/courses/${date}`);
+    setCurrentDate(new Date(year, month + 1, 1));
   };
 
   return (
-    <div className="w-full max-w-[1500px] 2xl:w-[870px] 3xl:max-w-[1500px] max-h-full mx-auto p-6 bg-white rounded-lg shadow-lg transition-all duration-300 sm:h-150 md:w-150 lg:w-200 2xl:ml-64 center">
-      <div className="flex justify-between items-center mb-4">
-        <button
-          onClick={prevMonth}
-          className="p-2 rounded-full hover:bg-gray-200"
-        >
-          <ChevronLeft />
-        </button>
-        <h2 className="text-lg font-bold">
-          {monthNames[currentMonth]} {currentYear}
-        </h2>
-        <button
-          onClick={nextMonth}
-          className="p-2 rounded-full hover:bg-gray-200"
-        >
-          <ChevronRight />
-        </button>
-      </div>
-
-      <div className="grid grid-cols-7 gap-2 text-center font-semibold">
-        {dayNames.map((day) => (
-          <div key={day} className="text-gray-600">
-            {day}
-          </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-7 gap-2 mt-2">
-        {Array.from({ length: firstDayOfMonth }).map((_, index) => (
-          <div key={`empty-${index}`} className="h-12"></div>
-        ))}
-
-        {Array.from({ length: daysInMonth }, (_, i) => {
-          const day = i + 1;
-          const dateString = `${currentYear}-${String(
-            currentMonth + 1
-          ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-          const event = trainingSchedule[dateString];
-          const isToday = dateString === todayString;
-          const isHovered = hoveredDate === dateString;
-
-          return (
-            <div
-              key={day}
-              className={`h-25 sm:h-16 flex items-center justify-center rounded-md cursor-pointer relative 
-                ${
-                  isToday
-                    ? "bg-blue-500 text-white"
-                    : event
-                    ? "bg-[#A70000] text-white"
-                    : "bg-gray-100"
-                } 
-                hover:bg-gray-300`}
-              onClick={() => handleDateClick(dateString)}
-              onMouseEnter={() => setHoveredDate(dateString)}
-              onMouseLeave={() => setHoveredDate(null)}
-            >
-              {isHovered && event ? (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="absolute inset-0 flex items-center justify-center px-1 text-xs font-medium text-center text-black"
-                >
-                  {event}
-                </motion.div>
-              ) : (
-                <span>{day}</span>
-              )}
+    <div className="flex h-[500px] w-full bg-white shadow-md rounded-md">
+      {/* Calendar Side */}
+      <div className="flex-1 flex flex-col p-">
+        <div className="w-full bg-white p-6 rounded-lg">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-6 text-gray-700">
+            <h3 className="text-2xl font-semibold">
+              {currentDate.toLocaleString("default", { month: "long" })}{" "}
+              {year}
+            </h3>
+            <div className="flex gap-2">
+              <button
+                onClick={prevMonth}
+                className="p-2 rounded hover:bg-gray-100"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <button
+                onClick={nextMonth}
+                className="p-2 rounded hover:bg-gray-100"
+              >
+                <ChevronRight size={20} />
+              </button>
             </div>
-          );
-        })}
+          </div>
+
+          {/* Days of week */}
+          <div className="grid grid-cols-7 text-center text-gray-600 font-medium mb-4">
+            {daysOfWeek.map((day, index) => (
+              <div key={index}>{day}</div>
+            ))}
+          </div>
+
+          {/* Calendar Grid */}
+          <div className="grid grid-cols-7 gap-2 text-center">
+            {days.map((day, index) => (
+              <div
+                key={index}
+                className={`h-10 w-10 flex items-center justify-center rounded-full ${
+                  day === currentDate.getDate()
+                    ? "bg-blue-600 text-white"
+                    : day
+                    ? "hover:bg-gray-100 text-gray-700"
+                    : ""
+                }`}
+              >
+                {day}
+              </div>
+            ))}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-4 mt-8">
+            <button className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-md font-semibold hover:bg-gray-200">
+              See Planned Events
+            </button>
+            <button className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-md font-semibold hover:bg-gray-200">
+              Set Reminder
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Event List Side */}
+      <div className="w-[300px] bg-[#0c0c1d] text-white p-6 flex flex-col justify-between rounded-r-lg">
+        <div>
+          <h4 className="text-lg font-semibold mb-4">EVENTS</h4>
+          {/* Event Items */}
+          <div className="space-y-4">
+            <div className="border-b border-white/20 pb-2">
+              Hiking with Hank
+            </div>
+            <div className="border-b border-white/20 pb-2">UI/UX Meeting</div>
+            <div className="border-b border-white/20 pb-2">Brother Bday</div>
+          </div>
+        </div>
+        
+        {/* Bottom Edit Button */}
+        <div className="flex justify-between items-center">
+          <button className="border border-white/30 px-4 py-1 rounded hover:bg-white/20">
+            Edit
+          </button>
+          <button className="text-white/50 hover:text-white">⚙️</button>
+        </div>
       </div>
     </div>
   );
-}
+};
+
+export default Calendar;

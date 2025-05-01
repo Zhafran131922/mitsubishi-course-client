@@ -10,9 +10,9 @@ const TrainCard = ({ title, author, level, duration, image, route }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-white rounded-xl shadow-lg overflow-hidden"
+      className="bg-white rounded-xl shadow-lg overflow-hidden w-full"
     >
-      <div className="relative w-full h-48">
+      <div className="relative w-full aspect-[4/3]">
         <Image src={image} alt="Materi" layout="fill" objectFit="cover" />
       </div>
       <div className="p-4 flex flex-col">
@@ -55,12 +55,16 @@ const CardsContainer = () => {
   const [showAll, setShowAll] = useState(false);
 
   return (
-    <div className="p-4 2xl:ml-64">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {(showAll ? courses : courses.slice(0, 4)).map((course, index) => (
-          <TrainCard key={index} {...course} />
+    <div className="w-full px-4">
+      {/* Grid container dengan ukuran box tetap */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 py-4">
+        {(showAll ? courses : courses.slice(0, 5)).map((course, index) => (
+          <div key={index} className="w-full">
+            <TrainCard {...course} />
+          </div>
         ))}
       </div>
+      
       <div className="flex justify-center mt-6">
         {!showAll ? (
           <motion.button 

@@ -1,49 +1,85 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle } from "lucide-react";
 
-const dummyUsers = [
-  { id: 1, name: "Zhafran", avatar: "https://i.pravatar.cc/150?img=1" },
-  { id: 2, name: "Alya", avatar: "https://i.pravatar.cc/150?img=2" },
-  { id: 3, name: "Farhan", avatar: "https://i.pravatar.cc/150?img=3" },
-];
-
+// Define the AdminChatBox component
 const AdminChatBox = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [chats, setChats] = useState({});
-  const [input, setInput] = useState("");
+  const [isOpen, setIsOpen] = useState(false); // State to manage chat box visibility
+  const [users, setUsers] = useState([]); // State to store the list of users
+  const [selectedUser, setSelectedUser] = useState(null); // State to store the selected user
+  const [chats, setChats] = useState({}); // State to store chat messages
+  const [input, setInput] = useState(""); // State to store the input message
 
+  // Fetch users from the API when the component mounts
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch("https://8218-114-10-44-89.ngrok-free.app/api/v1/users");
+        if (!response.ok) {
+          throw new Error("Failed to fetch users");
+        }
+        const data = await response.json();
+        setUsers(data); // Update the users state with the fetched data
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  // Toggle the visibility of the chat box
   const toggleChat = () => setIsOpen(!isOpen);
 
-  const handleUserSelect = (user) => {
+  // Handle user selection
+  const handleUserSelect = async (user) => {
     setSelectedUser(user);
-    if (!chats[user.id]) {
-      setChats({ ...chats, [user.id]: [] });
+    try {
+      const response = await fetch(`https://8218-114-10-44-89.ngrok-free.app/api/v1/messages?user_id=${user.id}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch messages");
+      }
+      const data = await response.json();
+      setChats((prevChats) => ({ ...prevChats, [user.id]: data })); // Update the chats state with the fetched messages
+    } catch (error) {
+      console.error("Error fetching messages:", error);
     }
   };
 
-  const handleSend = () => {
+  // Handle sending a message
+  const handleSend = async () => {
     if (!input.trim() || !selectedUser) return;
 
-    const newMessage = { sender: "admin", text: input };
-    const updatedChat = [...(chats[selectedUser.id] || []), newMessage];
+    const newMessage = {
+      sender_id: 1, // Replace with the actual sender_id of the admin
+      receiver_id: selectedUser.id,
+      message: input,
+    };
 
-    setChats({ ...chats, [selectedUser.id]: updatedChat });
-    setInput("");
+    try {
+      const response = await fetch("https://4fb5-114-10-44-89.ngrok-free.app/api/v1/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newMessage),
+      });
 
-    // Simulated user reply
-    setTimeout(() => {
-      setChats((prev) => ({
-        ...prev,
-        [selectedUser.id]: [
-          ...(prev[selectedUser.id] || []),
-          { sender: "user", text: "Terima kasih Admin 🙌" },
-        ],
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      }
+
+      const sentMessage = await response.json();
+      setChats((prevChats) => ({
+        ...prevChats,
+        [selectedUser.id]: [...(prevChats[selectedUser.id] || []), sentMessage],
       }));
-    }, 1000);
+      setInput(""); // Clear the input field after sending the message
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
   };
 
   return (
@@ -75,7 +111,7 @@ const AdminChatBox = () => {
             <div className="flex flex-1 overflow-hidden">
               {/* User Sidebar */}
               <div className="w-1/3 bg-gray-50 border-r border-gray-200 overflow-y-auto">
-                {dummyUsers.map((user) => (
+                {users.map((user) => (
                   <div
                     key={user.id}
                     onClick={() => handleUserSelect(user)}
@@ -86,11 +122,11 @@ const AdminChatBox = () => {
                     }`}
                   >
                     <img
-                      src={user.avatar}
-                      alt={user.name}
+                      src={user.avatar || `https://i.pravatar.cc/150?u=${user.id}`}
+                      alt={user.full_name}
                       className="w-8 h-8 rounded-full object-cover border"
                     />
-                    <span>{user.name}</span>
+                    <span>{user.full_name}</span>
                   </div>
                 ))}
               </div>
@@ -103,48 +139,51 @@ const AdminChatBox = () => {
                       <div
                         key={index}
                         className={`flex ${
-                          msg.sender === "admin"
+                          msg.sender_id === 1
                             ? "justify-end"
                             : "justify-start"
                         }`}
                       >
                         <div
                           className={`px-4 py-2 rounded-2xl max-w-[75%] ${
-                            msg.sender === "admin"
+                            msg.sender_id === 1
                               ? "bg-gradient-to-br from-red-600 to-red-700 text-white"
                               : "bg-gray-100 text-gray-800"
                           }`}
                         >
-                          {msg.text}
+                          {msg.message}
                         </div>
                       </div>
                     ))}
                   {!selectedUser && (
-                    <p className="text-gray-400 text-sm text-center mt-10">
-                      Pilih pengguna untuk memulai chat 📬
+                    <p className="text-gray-400 text-sm text
+::contentReference[oaicite:6]{index=6}
+ 
+                          text-center">
+                      Silakan pilih pengguna untuk mulai chat.
                     </p>
                   )}
                 </div>
 
-                {/* Input */}
-                <div className="border-t p-3 flex items-center gap-2 bg-white">
-                  <input
-                    type="text"
-                    className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
-                    placeholder="Ketik pesan..."
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                    disabled={!selectedUser}
-                  />
-                  <button
-                    onClick={handleSend}
-                    disabled={!selectedUser}
-                    className="bg-gradient-to-r from-red-600 to-red-800 text-white px-4 py-2 rounded-full text-sm shadow hover:scale-105 transition"
-                  >
-                    Kirim
-                  </button>
-                </div>
+                {/* Message Input */}
+                {selectedUser && (
+                  <div className="flex items-center border-t border-gray-200 p-3 gap-2">
+                    <input
+                      type="text"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                      placeholder="Ketik pesan..."
+                      className="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    />
+                    <button
+                      onClick={handleSend}
+                      className="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 transition"
+                    >
+                      Kirim
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>

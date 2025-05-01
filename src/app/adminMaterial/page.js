@@ -100,7 +100,7 @@ const AdminMaterial = () => {
     <div className="flex flex-col lg:flex-row">
       <Sidebar className="w-full lg:w-64 h-auto lg:h-screen bg-gray-800 text-white fixed lg:relative top-0 left-0" />
 
-      <div className="2xl:ml-64 p-6 w-full">
+      <div className="2xl:ml-30 p-6 w-full">
         <div className="flex items-center mb-6">
           <span className="bg-black text-white px-4 py-2 text-sm font-bold transform -skew-x-12">
             ☰ Admin Page
