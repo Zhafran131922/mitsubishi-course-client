@@ -93,7 +93,7 @@ const Sidebar = () => {
       </div>
 
       {/* Navbar Mobile */}
-      <div className="2xl:hidden flex items-center justify-between bg-black text-white p-4 fixed w-full top-0 left-0 z-50">
+      <div className="2xl:hidden flex items-center justify-between bg-black text-white p-4 fixed w-full top-0 left-0 z-40 h-16">
         <button onClick={() => setIsOpen(!isOpen)} className="focus:outline-none">
           <Image src={Logo} alt="Logo" width={40} height={40} />
         </button>
@@ -132,6 +132,7 @@ const Sidebar = () => {
           </nav>
         </motion.div>
       )}
+       <div className="2xl:hidden h-16"></div>
     </>
   );
 };

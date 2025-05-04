@@ -184,6 +184,7 @@ const Sidebar = ({ onExpand }) => {
           </motion.div>
         )}
       </AnimatePresence>
+      <div className="2xl:hidden h-16"></div>
     </>
   );
 };
