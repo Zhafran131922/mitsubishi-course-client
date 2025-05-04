@@ -144,9 +144,9 @@ const AdminAgenda = () => {
                           <div className={`w-8 h-8 mx-auto rounded-full flex items-center justify-center transition-all duration-200 
                             ${isScheduled ? 
                               `${user.color} text-white shadow-md transform hover:scale-110` : 
-                              'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                              "bg-gray-100 text-gray-400 hover:bg-gray-200"
                             }
-                            ${isHovered ? 'ring-2 ring-offset-2 ring-gray-300' : ''}
+                            ${isHovered ? "ring-2 ring-offset-2 ring-gray-300" : ""}
                           `}>
                             {isScheduled && (
                               <motion.div 

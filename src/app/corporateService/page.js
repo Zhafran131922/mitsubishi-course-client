@@ -15,7 +15,7 @@ const CorporateService = () => {
       </div>
       
       {/* Main Content */}
-      <div className={`transition-all duration-300 ${sidebarExpanded ? 'lg:ml-70' : 'lg:ml-30'} p-6 w-full`}>
+      <div className={`transition-all duration-300 ${sidebarExpanded ? "lg:ml-70" : "lg:ml-30"} p-6 w-full`}>
         {/* Header Section */}
         <div className="flex flex-col items-start mb-12">
           <div className="flex items-center mb-6">
@@ -64,7 +64,7 @@ const CorporateService = () => {
             <div className="w-24 h-1 bg-[#A70000] mx-auto"></div>
           </div>
           
-          <div className={`grid grid-cols-1 ${sidebarExpanded ? 'lg:grid-cols-2 xl:grid-cols-3' : 'md:grid-cols-2 lg:grid-cols-3'} gap-8 max-w-6xl mx-auto`}>
+          <div className={`grid grid-cols-1 ${sidebarExpanded ? "lg:grid-cols-2 xl:grid-cols-3" : "md:grid-cols-2 lg:grid-cols-3"} gap-8 max-w-6xl mx-auto`}>
             <ServiceCard
               icon={<BookOpen size={32} className="text-[#A70000]" />}
               title="Regular Training"

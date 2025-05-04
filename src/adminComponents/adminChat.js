@@ -58,7 +58,7 @@ const AdminChatBox = () => {
       sender_id: 1, // Admin ID
       receiver_id: selectedUser.id,
       message: input,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
     };
 
     setChats(prev => ({

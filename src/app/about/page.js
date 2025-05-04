@@ -12,7 +12,7 @@ const AboutUs = () => {
       <Sidebar onExpand={setSidebarExpanded} />
       
       {/* Main Content */}
-      <div className={`transition-all duration-300 ${sidebarExpanded ? 'lg:ml-64' : 'lg:ml-20'} w-full`}>
+      <div className={`transition-all duration-300 ${sidebarExpanded ? "lg:ml-64" : "lg:ml-20"} w-full`}>
         <div className="flex flex-col items-center justify-center min-h-screen px-4 sm:px-8 py-12">
           {/* About Section */}
           <div className="max-w-4xl w-full text-center">
@@ -42,7 +42,7 @@ const AboutUs = () => {
           </div>
 
           {/* Our Values Section */}
-          <div className={`grid grid-cols-1 ${sidebarExpanded ? 'lg:grid-cols-2' : 'md:grid-cols-2'} gap-8 max-w-4xl w-full mt-12 items-center`}>
+          <div className={`grid grid-cols-1 ${sidebarExpanded ? "lg:grid-cols-2" : "md:grid-cols-2"} gap-8 max-w-4xl w-full mt-12 items-center`}>
             <div className="w-full max-w-[560px] mx-auto md:mx-0">
               <Image 
                 src="/assets/car3.jpg" 
@@ -71,7 +71,7 @@ const AboutUs = () => {
             </p>
           </div>
 
-          <div className={`grid grid-cols-1 ${sidebarExpanded ? 'lg:grid-cols-2' : 'md:grid-cols-2'} gap-8 max-w-4xl w-full mt-8`}>
+          <div className={`grid grid-cols-1 ${sidebarExpanded ? "lg:grid-cols-2" : "md:grid-cols-2"} gap-8 max-w-4xl w-full mt-8`}>
             <div className="space-y-6">
               {[1, 2, 3].map((item, index) => (
                 <div 

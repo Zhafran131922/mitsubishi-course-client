@@ -20,7 +20,7 @@ const chapterContents = {
     content: [
       {
         type: "text",
-        data: "Mitsubishi New Pajero Sport menghadirkan konsep 'Live The Adventure' dengan desain yang lebih maskulin dan berkarakter. SUV ini merupakan generasi terbaru dari lini Pajero Sport yang telah terbukti tangguh di berbagai medan."
+        data: "Mitsubishi New Pajero Sport menghadirkan konsep Live The Adventur dengan desain yang lebih maskulin dan berkarakter. SUV ini merupakan generasi terbaru dari lini Pajero Sport yang telah terbukti tangguh di berbagai medan."
       },
       {
         type: "image",
@@ -143,13 +143,13 @@ const Courses = () => {
               
               {chapterContents[activeChapter].content.map((item, index) => {
                 switch(item.type) {
-                  case 'text':
+                  case "text":
                     return (
                       <p key={index} className="mb-4 text-gray-700 leading-relaxed">
                         {item.data}
                       </p>
                     );
-                  case 'image':
+                  case "image":
                     return (
                       <div key={index} className="my-6">
                         <div className="relative w-full h-64 md:h-80 rounded-md overflow-hidden">
@@ -166,7 +166,7 @@ const Courses = () => {
                         </p>
                       </div>
                     );
-                  case 'table':
+                  case "table":
                     return (
                       <div key={index} className="overflow-x-auto my-6">
                         <table className="min-w-full border border-gray-200">

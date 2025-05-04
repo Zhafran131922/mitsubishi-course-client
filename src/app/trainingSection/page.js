@@ -19,7 +19,7 @@ export default function TrainingSection() {
       </div>
       
       {/* Main Content */}
-      <div className={`flex-1 transition-all duration-300 ${sidebarExpanded ? 'lg:ml-64' : 'lg:ml-20'} pt-16 lg:pt-0`}>
+      <div className={`flex-1 transition-all duration-300 ${sidebarExpanded ? "lg:ml-64" : "lg:ml-20"} pt-16 lg:pt-0`}>
         {/* Header - Fixed at top on mobile */}
         <div className="fixed top-0 left-0 right-0 lg:right-6 lg:left-auto bg-white shadow-sm lg:shadow-none z-40 p-4 lg:top-4 lg:p-0">
           <Header />
