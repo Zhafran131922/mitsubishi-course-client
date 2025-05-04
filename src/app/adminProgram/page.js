@@ -3,36 +3,69 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { CheckCircle, Clock, Wifi, MapPin, Award, Users, Presentation, BookOpen, Clipboard, Filter, Trash2, Edit, Plus } from "lucide-react";
+import {
+  CheckCircle,
+  Clock,
+  Wifi,
+  MapPin,
+  Award,
+  Users,
+  Presentation,
+  BookOpen,
+  Clipboard,
+  Filter,
+  Trash2,
+  Edit,
+  Plus,
+} from "lucide-react";
 import Sidebar from "@/adminComponents/Sidebar";
 
 const ProgramCard = ({ program, onDelete, onEdit }) => {
   const getActivityIcon = () => {
-    switch(program.type) {
-      case 'Contest':
+    switch (program.type) {
+      case "Contest":
         return <Award className="w-5 h-5 text-yellow-600" />;
-      case 'Workshop':
+      case "Workshop":
         return <Users className="w-5 h-5 text-blue-600" />;
-      case 'Presentation':
+      case "Presentation":
         return <Presentation className="w-5 h-5 text-purple-600" />;
-      case 'Training':
+      case "Training":
         return <BookOpen className="w-5 h-5 text-green-600" />;
-      case 'Assessment':
+      case "Assessment":
         return <Clipboard className="w-5 h-5 text-red-600" />;
       default:
-        return program.isOnline ? <Wifi className="w-5 h-5 text-blue-600" /> : <MapPin className="w-5 h-5 text-red-600" />;
+        return program.isOnline ? (
+          <Wifi className="w-5 h-5 text-blue-600" />
+        ) : (
+          <MapPin className="w-5 h-5 text-red-600" />
+        );
     }
   };
 
-  const getApplicationBadge = (app) => {
+  const getApplicationBadge = (app, key) => {
     const baseClass = "px-2 py-1 rounded-full text-xs font-medium mr-1 mb-1";
-    
+
     if (app.includes("Teams") || app.includes("Zoom")) {
-      return <span className={`${baseClass} bg-blue-100 text-blue-800`}>{app}</span>;
+      return (
+        <span key={key} className={`${baseClass} bg-blue-100 text-blue-800`}>
+          {app}
+        </span>
+      );
     } else if (app.includes("LMS")) {
-      return <span className={`${baseClass} bg-purple-100 text-purple-800`}>{app}</span>;
+      return (
+        <span
+          key={key}
+          className={`${baseClass} bg-purple-100 text-purple-800`}
+        >
+          {app}
+        </span>
+      );
     } else {
-      return <span className={`${baseClass} bg-gray-100 text-gray-800`}>{app}</span>;
+      return (
+        <span key={key} className={`${baseClass} bg-gray-100 text-gray-800`}>
+          {app}
+        </span>
+      );
     }
   };
 
@@ -40,10 +73,19 @@ const ProgramCard = ({ program, onDelete, onEdit }) => {
     <div className="bg-white rounded-xl shadow-md overflow-hidden transition-transform hover:scale-[1.02] flex flex-col h-full border border-gray-200">
       {program.image && (
         <div className="relative w-full h-40">
-          <Image src={program.image} alt={program.title} layout="fill" objectFit="cover" />
-          <div className={`absolute top-2 right-2 px-2 py-1 rounded-md text-xs font-semibold flex items-center gap-1 ${
-            program.isOnline ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
-          }`}>
+          <Image
+            src={program.image}
+            alt={program.title}
+            layout="fill"
+            objectFit="cover"
+          />
+          <div
+            className={`absolute top-2 right-2 px-2 py-1 rounded-md text-xs font-semibold flex items-center gap-1 ${
+              program.isOnline
+                ? "bg-blue-100 text-blue-800"
+                : "bg-red-100 text-red-800"
+            }`}
+          >
             {program.isOnline ? (
               <>
                 <Wifi className="w-3 h-3" />
@@ -58,49 +100,59 @@ const ProgramCard = ({ program, onDelete, onEdit }) => {
           </div>
         </div>
       )}
-      
+
       <div className="p-4 flex flex-col flex-grow">
         <div className="flex items-center gap-3 mb-3">
           {getActivityIcon()}
-          <span className={`text-xs font-semibold px-2 py-1 rounded-md ${
-            program.type === 'Contest' ? 'bg-yellow-100 text-yellow-800' :
-            program.type === 'Workshop' ? 'bg-blue-100 text-blue-800' :
-            program.type === 'Presentation' ? 'bg-purple-100 text-purple-800' :
-            program.type === 'Training' ? 'bg-green-100 text-green-800' :
-            program.type === 'Assessment' ? 'bg-red-100 text-red-800' :
-            'bg-gray-100 text-gray-800'
-          }`}>
-            {program.type || (program.isOnline ? 'Online Program' : 'Offline Program')}
+          <span
+            className={`text-xs font-semibold px-2 py-1 rounded-md ${
+              program.type === "Contest"
+                ? "bg-yellow-100 text-yellow-800"
+                : program.type === "Workshop"
+                ? "bg-blue-100 text-blue-800"
+                : program.type === "Presentation"
+                ? "bg-purple-100 text-purple-800"
+                : program.type === "Training"
+                ? "bg-green-100 text-green-800"
+                : program.type === "Assessment"
+                ? "bg-red-100 text-red-800"
+                : "bg-gray-100 text-gray-800"
+            }`}
+          >
+            {program.type ||
+              (program.isOnline ? "Online Program" : "Offline Program")}
           </span>
         </div>
-        
+
         <h2 className="text-lg font-bold">{program.title}</h2>
-        
+
         {!program.isOnline && program.location && (
           <div className="flex items-center gap-2 text-gray-600 text-sm mt-1">
             <MapPin className="w-4 h-4" />
             <span>{program.location}</span>
           </div>
         )}
-        
+
         <div className="mt-3 mb-4">
           <div className="flex items-center gap-2 text-gray-600 text-sm">
             <Clock className="w-4 h-4" />
             <span>{program.duration}</span>
           </div>
-          
+
           {program.isOnline && program.application && (
             <div className="mt-2">
               <p className="text-xs text-gray-500 mb-1">Platform:</p>
               <div className="flex flex-wrap">
                 {program.application.split(",").map((app, i) => (
-                  getApplicationBadge(app.trim())
+                  <React.Fragment key={i}>
+                    {getApplicationBadge(app.trim())}
+                  </React.Fragment>
                 ))}
               </div>
             </div>
           )}
         </div>
-        
+
         <div className="mt-auto flex gap-2">
           <button
             onClick={() => onEdit(program)}
@@ -124,7 +176,7 @@ const AdminProgram = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState({
     delivery: "all", // all, online, offline
-    type: "all" // all, contest, workshop, etc.
+    type: "all", // all, contest, workshop, etc.
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentProgram, setCurrentProgram] = useState(null);
@@ -138,7 +190,7 @@ const AdminProgram = () => {
       application: "MOODLE (LMS)",
       route: "/programs/contest-theory-test",
       isOnline: true,
-      image: "/assets/car1.jpg"
+      image: "/assets/car1.jpg",
     },
     {
       id: 2,
@@ -148,7 +200,7 @@ const AdminProgram = () => {
       application: "Microsoft Teams, Zoom",
       route: "/programs/design-workshop",
       isOnline: true,
-      image: "/assets/car2.jpg"
+      image: "/assets/car2.jpg",
     },
     {
       id: 3,
@@ -158,7 +210,7 @@ const AdminProgram = () => {
       application: "Zoom",
       route: "/programs/innovation-presentation",
       isOnline: true,
-      image: "/assets/car3.jpg"
+      image: "/assets/car3.jpg",
     },
     {
       id: 4,
@@ -168,7 +220,7 @@ const AdminProgram = () => {
       application: "Microsoft Teams, LMS",
       route: "/programs/product-training",
       isOnline: true,
-      image: "/assets/car2.jpg"
+      image: "/assets/car2.jpg",
     },
     // Offline Programs
     {
@@ -179,7 +231,7 @@ const AdminProgram = () => {
       route: "/programs/technical-workshop",
       isOnline: false,
       location: "Jakarta Main Campus, Room 301",
-      image: "/assets/car3.jpg"
+      image: "/assets/car3.jpg",
     },
     {
       id: 6,
@@ -189,7 +241,7 @@ const AdminProgram = () => {
       route: "/programs/product-exhibition",
       isOnline: false,
       location: "Convention Center, Central Jakarta",
-      image: "/assets/car2.jpg"
+      image: "/assets/car2.jpg",
     },
     {
       id: 7,
@@ -199,7 +251,7 @@ const AdminProgram = () => {
       route: "/programs/leadership-training",
       isOnline: false,
       location: "Bandung Training Center",
-      image: "/assets/car1.jpg"
+      image: "/assets/car1.jpg",
     },
     {
       id: 8,
@@ -209,33 +261,35 @@ const AdminProgram = () => {
       route: "/programs/final-presentation",
       isOnline: false,
       location: "Surabaya Campus, Auditorium",
-      image: "/assets/car2.jpg"
-    }
+      image: "/assets/car2.jpg",
+    },
   ]);
 
   const filteredPrograms = programs.filter((program) => {
     // Filter by search term
-    const matchesSearch = program.title.toLowerCase().includes(searchTerm.toLowerCase());
-    
+    const matchesSearch = program.title
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
     // Filter by delivery method
-    const matchesDelivery = 
-      filter.delivery === "all" || 
-      (filter.delivery === "online" && program.isOnline) || 
+    const matchesDelivery =
+      filter.delivery === "all" ||
+      (filter.delivery === "online" && program.isOnline) ||
       (filter.delivery === "offline" && !program.isOnline);
-    
+
     // Filter by type
     const matchesType = filter.type === "all" || program.type === filter.type;
-    
+
     return matchesSearch && matchesDelivery && matchesType;
   });
 
-  const programTypes = [...new Set(programs.map(program => program.type))];
-  const onlineCount = programs.filter(p => p.isOnline).length;
-  const offlineCount = programs.filter(p => !p.isOnline).length;
+  const programTypes = [...new Set(programs.map((program) => program.type))];
+  const onlineCount = programs.filter((p) => p.isOnline).length;
+  const offlineCount = programs.filter((p) => !p.isOnline).length;
 
   const handleDelete = (program) => {
     if (confirm(`Are you sure you want to delete "${program.title}"?`)) {
-      setPrograms(programs.filter(p => p.id !== program.id));
+      setPrograms(programs.filter((p) => p.id !== program.id));
     }
   };
 
@@ -253,20 +307,22 @@ const AdminProgram = () => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const newProgramData = {
-      id: currentProgram?.id || Math.max(...programs.map(p => p.id), 0) + 1,
-      title: formData.get('title'),
-      type: formData.get('type'),
-      duration: formData.get('duration'),
-      application: formData.get('application'),
-      route: formData.get('route'),
-      isOnline: formData.get('isOnline') === 'true',
-      location: formData.get('location'),
-      image: formData.get('image')
+      id: currentProgram?.id || Math.max(...programs.map((p) => p.id), 0) + 1,
+      title: formData.get("title"),
+      type: formData.get("type"),
+      duration: formData.get("duration"),
+      application: formData.get("application"),
+      route: formData.get("route"),
+      isOnline: formData.get("isOnline") === "true",
+      location: formData.get("location"),
+      image: formData.get("image"),
     };
 
     if (currentProgram) {
       // Update existing program
-      setPrograms(programs.map(p => p.id === currentProgram.id ? newProgramData : p));
+      setPrograms(
+        programs.map((p) => (p.id === currentProgram.id ? newProgramData : p))
+      );
     } else {
       // Add new program
       setPrograms([...programs, newProgramData]);
@@ -293,7 +349,7 @@ const AdminProgram = () => {
           <h1 className="text-2xl font-bold text-center md:text-left">
             Manage Programs
           </h1>
-          
+
           <div className="flex items-center gap-4">
             <button
               onClick={handleAddNew}
@@ -318,18 +374,20 @@ const AdminProgram = () => {
             <Filter className="w-5 h-5" />
             <span className="font-medium">Filter Programs</span>
           </div>
-          
+
           <div className="flex flex-wrap gap-4">
             {/* Delivery Method Filter */}
             <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Delivery Method</h3>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">
+                Delivery Method
+              </h3>
               <div className="flex flex-wrap gap-2">
-                <button 
-                  onClick={() => setFilter({...filter, delivery: "all"})}
+                <button
+                  onClick={() => setFilter({ ...filter, delivery: "all" })}
                   className={`px-3 py-1 text-sm rounded-md flex items-center gap-1 ${
-                    filter.delivery === "all" 
-                      ? 'bg-gray-800 text-white' 
-                      : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+                    filter.delivery === "all"
+                      ? "bg-gray-800 text-white"
+                      : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
                   }`}
                 >
                   <span>All</span>
@@ -337,13 +395,13 @@ const AdminProgram = () => {
                     {programs.length}
                   </span>
                 </button>
-                
-                <button 
-                  onClick={() => setFilter({...filter, delivery: "online"})}
+
+                <button
+                  onClick={() => setFilter({ ...filter, delivery: "online" })}
                   className={`px-3 py-1 text-sm rounded-md flex items-center gap-1 ${
-                    filter.delivery === "online" 
-                      ? 'bg-blue-600 text-white' 
-                      : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+                    filter.delivery === "online"
+                      ? "bg-blue-600 text-white"
+                      : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
                   }`}
                 >
                   <Wifi className="w-4 h-4" />
@@ -352,13 +410,13 @@ const AdminProgram = () => {
                     {onlineCount}
                   </span>
                 </button>
-                
-                <button 
-                  onClick={() => setFilter({...filter, delivery: "offline"})}
+
+                <button
+                  onClick={() => setFilter({ ...filter, delivery: "offline" })}
                   className={`px-3 py-1 text-sm rounded-md flex items-center gap-1 ${
-                    filter.delivery === "offline" 
-                      ? 'bg-red-600 text-white' 
-                      : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+                    filter.delivery === "offline"
+                      ? "bg-red-600 text-white"
+                      : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
                   }`}
                 >
                   <MapPin className="w-4 h-4" />
@@ -369,34 +427,40 @@ const AdminProgram = () => {
                 </button>
               </div>
             </div>
-            
+
             {/* Program Type Filter */}
             <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Program Type</h3>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">
+                Program Type
+              </h3>
               <div className="flex flex-wrap gap-2">
-                <button 
-                  onClick={() => setFilter({...filter, type: "all"})}
+                <button
+                  onClick={() => setFilter({ ...filter, type: "all" })}
                   className={`px-3 py-1 text-sm rounded-md ${
-                    filter.type === "all" 
-                      ? 'bg-gray-800 text-white' 
-                      : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+                    filter.type === "all"
+                      ? "bg-gray-800 text-white"
+                      : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
                   }`}
                 >
                   All Types
                 </button>
-                
+
                 {programTypes.map((type) => (
                   <button
                     key={type}
-                    onClick={() => setFilter({...filter, type})}
+                    onClick={() => setFilter({ ...filter, type })}
                     className={`px-3 py-1 text-sm rounded-md ${
                       filter.type === type
-                        ? type === 'Contest' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
-                          type === 'Workshop' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
-                          type === 'Presentation' ? 'bg-purple-100 text-purple-800 border border-purple-200' :
-                          type === 'Training' ? 'bg-green-100 text-green-800 border border-green-200' :
-                          'bg-red-100 text-red-800 border border-red-200'
-                        : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+                        ? type === "Contest"
+                          ? "bg-yellow-100 text-yellow-800 border border-yellow-200"
+                          : type === "Workshop"
+                          ? "bg-blue-100 text-blue-800 border border-blue-200"
+                          : type === "Presentation"
+                          ? "bg-purple-100 text-purple-800 border border-purple-200"
+                          : type === "Training"
+                          ? "bg-green-100 text-green-800 border border-green-200"
+                          : "bg-red-100 text-red-800 border border-red-200"
+                        : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
                     }`}
                   >
                     {type}
@@ -411,7 +475,7 @@ const AdminProgram = () => {
           Showing {filteredPrograms.length} of {programs.length} programs
           {(filter.delivery !== "all" || filter.type !== "all") && (
             <span className="ml-2">
-              (Filtered: 
+              (Filtered:
               {filter.delivery !== "all" && ` ${filter.delivery}`}
               {filter.type !== "all" && ` ${filter.type}`})
             </span>
@@ -422,9 +486,9 @@ const AdminProgram = () => {
         {filteredPrograms.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredPrograms.map((program) => (
-              <ProgramCard 
-                key={program.id} 
-                program={program} 
+              <ProgramCard
+                key={program.id}
+                program={program}
                 onDelete={handleDelete}
                 onEdit={handleEdit}
               />
@@ -432,16 +496,20 @@ const AdminProgram = () => {
           </div>
         ) : (
           <div className="text-center py-12 bg-gray-50 rounded-lg">
-            <h3 className="text-lg font-medium text-gray-500">No programs found</h3>
+            <h3 className="text-lg font-medium text-gray-500">
+              No programs found
+            </h3>
             <p className="text-gray-400 mt-1">
-              {searchTerm 
+              {searchTerm
                 ? `Try a different search term or reset filters`
-                : (filter.delivery !== "all" || filter.type !== "all")
-                  ? `No programs match your filters`
-                  : "No programs available"}
+                : filter.delivery !== "all" || filter.type !== "all"
+                ? `No programs match your filters`
+                : "No programs available"}
             </p>
-            {(searchTerm || filter.delivery !== "all" || filter.type !== "all") && (
-              <button 
+            {(searchTerm ||
+              filter.delivery !== "all" ||
+              filter.type !== "all") && (
+              <button
                 onClick={() => {
                   setSearchTerm("");
                   setFilter({ delivery: "all", type: "all" });
@@ -465,7 +533,9 @@ const AdminProgram = () => {
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Title*</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Title*
+                  </label>
                   <input
                     type="text"
                     name="title"
@@ -474,9 +544,11 @@ const AdminProgram = () => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-md"
                   />
                 </div>
-                
+
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Type*</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Type*
+                  </label>
                   <select
                     name="type"
                     defaultValue={currentProgram?.type || ""}
@@ -492,9 +564,11 @@ const AdminProgram = () => {
                     <option value="Exhibition">Exhibition</option>
                   </select>
                 </div>
-                
+
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Duration*</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Duration*
+                  </label>
                   <input
                     type="text"
                     name="duration"
@@ -503,9 +577,11 @@ const AdminProgram = () => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-md"
                   />
                 </div>
-                
+
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Method*</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Delivery Method*
+                  </label>
                   <select
                     name="isOnline"
                     defaultValue={currentProgram?.isOnline ? "true" : "false"}
@@ -516,9 +592,11 @@ const AdminProgram = () => {
                     <option value="false">Offline</option>
                   </select>
                 </div>
-                
+
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Platform (if online)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Platform (if online)
+                  </label>
                   <input
                     type="text"
                     name="application"
@@ -527,9 +605,11 @@ const AdminProgram = () => {
                     placeholder="e.g., Zoom, Microsoft Teams"
                   />
                 </div>
-                
+
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Location (if offline)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Location (if offline)
+                  </label>
                   <input
                     type="text"
                     name="location"
@@ -538,9 +618,11 @@ const AdminProgram = () => {
                     placeholder="e.g., Main Campus, Room 101"
                   />
                 </div>
-                
+
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Route*</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Route*
+                  </label>
                   <input
                     type="text"
                     name="route"
@@ -550,9 +632,11 @@ const AdminProgram = () => {
                     placeholder="e.g., /programs/program-name"
                   />
                 </div>
-                
+
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Image URL*</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Image URL*
+                  </label>
                   <input
                     type="text"
                     name="image"
@@ -563,7 +647,7 @@ const AdminProgram = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="flex justify-end gap-4 mt-6">
                 <button
                   type="button"

@@ -18,7 +18,7 @@ const decodeToken = (token) => {
   }
 };
 
-const receiver_id = 1; 
+const receiver_id = 1;
 
 const UserChat = () => {
   const [senderId, setSenderId] = useState(null);
@@ -28,80 +28,37 @@ const UserChat = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    console.log("Token di localStorage:", token); // cek di console
-  
     const decoded = decodeToken(token);
     if (decoded && decoded.id) {
       setSenderId(decoded.id);
-    } else {
-      console.warn("ID tidak ditemukan dalam token");
     }
   }, []);
-  
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
   };
 
-  const fetchMessages = async () => {
-    try {
-      if (!senderId) return;
-      const res = await fetch(
-        `http://localhost:3000/api/messages?sender_id=${senderId}&receiver_id=${receiver_id}`
-      );
-      const data = await res.json();
-      const formatted = data.map((item) => ({
-        sender: item.sender_id === senderId ? "user" : "admin",
-        text: item.message,
-      }));
-      setMessages(formatted);
-    } catch (error) {
-      console.error("Gagal memuat pesan:", error);
-    }
-  };
-
-  const sendMessage = async (msgText) => {
-    try {
-      if (!senderId) return;
-
-      const res = await fetch(
-        "https://1d37-114-10-44-89.ngrok-free.app/api/v1/chat",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            sender_id: senderId,
-            receiver_id,
-            message: msgText,
-          }),
-        }
-      );
-
-      if (!res.ok) throw new Error("Gagal mengirim pesan");
-
-      const newMessage = await res.json();
-      setMessages((prev) => [
-        ...prev,
-        { sender: "user", text: newMessage.message },
+  // Simulasi data lokal saat membuka chat
+  useEffect(() => {
+    if (isOpen && senderId) {
+      setMessages([
+        { sender: "admin", text: "Halo! Ada yang bisa kami bantu?" },
       ]);
-    } catch (error) {
-      console.error(error);
     }
-  };
+  }, [isOpen, senderId]);
 
   const handleSend = () => {
     if (input.trim() === "") return;
-    sendMessage(input);
+
+    // Tambahkan pesan user ke daftar
+    setMessages((prev) => [
+      ...prev,
+      { sender: "user", text: input },
+      // Simulasi balasan otomatis
+      { sender: "admin", text: "Pesan Anda telah diterima!" },
+    ]);
     setInput("");
   };
-
-  useEffect(() => {
-    if (isOpen && senderId) {
-      fetchMessages();
-    }
-  }, [isOpen, senderId]);
 
   return (
     <div className="fixed bottom-6 right-6 z-50">

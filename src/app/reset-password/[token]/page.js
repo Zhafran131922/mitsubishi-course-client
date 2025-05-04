@@ -21,28 +21,12 @@ export default function ResetPasswordPage() {
     }
 
     setLoading(true);
-    try {
-      const response = await fetch("https://1d37-114-10-44-89.ngrok-free.app/api/v1/auth/reset-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token, newPassword: password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Something went wrong.");
-      }
-
+    // Simulasi success
+    setTimeout(() => {
       setMessage("Password successfully changed. Redirecting to login...");
-      setTimeout(() => router.push("/login"), 3000);
-    } catch (error) {
-      setMessage(error.message);
-    } finally {
       setLoading(false);
-    }
+      setTimeout(() => router.push("/login"), 3000);
+    }, 1500);
   };
 
   return (

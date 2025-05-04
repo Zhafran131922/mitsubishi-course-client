@@ -26,7 +26,7 @@ const CorporateService = () => {
           
           <div className="text-left max-w-3xl">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
-              Elevate Your Team's <span className="text-[#A70000]">Expertise</span>
+              Elevate Your Teams <span className="text-[#A70000]">Expertise</span>
             </h1>
             <p className="text-gray-600 mt-4 text-lg">
               Transform your workforce with our cutting-edge corporate training programs 

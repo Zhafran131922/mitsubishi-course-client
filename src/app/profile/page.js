@@ -17,7 +17,7 @@ export default function AccountSettings() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSave = () => {
@@ -26,17 +26,18 @@ export default function AccountSettings() {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen items-center justify-center">
       <Sidebar />
-      
+
       <div className="flex-1 p-6 lg:ml-20">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-8">
-            {/* Left Column - Navigation */}
             <div className="w-full lg:w-64">
               <div className="bg-white rounded-xl shadow-sm p-6 sticky top-6">
-                <h2 className="text-2xl font-bold mb-8 text-gray-800">Account Settings</h2>
-                
+                <h2 className="text-2xl font-bold mb-8 text-gray-800">
+                  Account Settings
+                </h2>
+
                 <nav className="space-y-2">
                   {[
                     { id: "profile", label: "Profile Information", icon: "👤" },
@@ -68,7 +69,9 @@ export default function AccountSettings() {
                   {/* Profile Header */}
                   <div className="border-b border-gray-100 p-6">
                     <div className="flex justify-between items-center">
-                      <h3 className="text-xl font-semibold text-gray-800">Profile Information</h3>
+                      <h3 className="text-xl font-semibold text-gray-800">
+                        Profile Information
+                      </h3>
                       {isEditing ? (
                         <div className="flex gap-2">
                           <button
@@ -123,20 +126,26 @@ export default function AccountSettings() {
                       {/* Form Fields */}
                       <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-1">
-                          <label className="text-sm font-medium text-gray-700">Username</label>
+                          <label className="text-sm font-medium text-gray-700">
+                            Username
+                          </label>
                           <input
                             name="username"
                             value={formData.username}
                             onChange={handleInputChange}
                             disabled={!isEditing}
                             className={`w-full px-4 py-2 rounded-lg border ${
-                              isEditing ? "border-gray-300" : "border-transparent bg-gray-50"
+                              isEditing
+                                ? "border-gray-300"
+                                : "border-transparent bg-gray-50"
                             }`}
                           />
                         </div>
 
                         <div className="space-y-1">
-                          <label className="text-sm font-medium text-gray-700">Email</label>
+                          <label className="text-sm font-medium text-gray-700">
+                            Email
+                          </label>
                           <input
                             name="email"
                             type="email"
@@ -144,39 +153,51 @@ export default function AccountSettings() {
                             onChange={handleInputChange}
                             disabled={!isEditing}
                             className={`w-full px-4 py-2 rounded-lg border ${
-                              isEditing ? "border-gray-300" : "border-transparent bg-gray-50"
+                              isEditing
+                                ? "border-gray-300"
+                                : "border-transparent bg-gray-50"
                             }`}
                           />
                         </div>
 
                         <div className="space-y-1">
-                          <label className="text-sm font-medium text-gray-700">Phone Number</label>
+                          <label className="text-sm font-medium text-gray-700">
+                            Phone Number
+                          </label>
                           <input
                             name="phone"
                             value={formData.phone}
                             onChange={handleInputChange}
                             disabled={!isEditing}
                             className={`w-full px-4 py-2 rounded-lg border ${
-                              isEditing ? "border-gray-300" : "border-transparent bg-gray-50"
+                              isEditing
+                                ? "border-gray-300"
+                                : "border-transparent bg-gray-50"
                             }`}
                           />
                         </div>
 
                         <div className="space-y-1">
-                          <label className="text-sm font-medium text-gray-700">Position</label>
+                          <label className="text-sm font-medium text-gray-700">
+                            Position
+                          </label>
                           <input
                             name="position"
                             value={formData.position}
                             onChange={handleInputChange}
                             disabled={!isEditing}
                             className={`w-full px-4 py-2 rounded-lg border ${
-                              isEditing ? "border-gray-300" : "border-transparent bg-gray-50"
+                              isEditing
+                                ? "border-gray-300"
+                                : "border-transparent bg-gray-50"
                             }`}
                           />
                         </div>
 
                         <div className="space-y-1 md:col-span-2">
-                          <label className="text-sm font-medium text-gray-700">Address</label>
+                          <label className="text-sm font-medium text-gray-700">
+                            Address
+                          </label>
                           <textarea
                             name="address"
                             value={formData.address}
@@ -184,20 +205,26 @@ export default function AccountSettings() {
                             disabled={!isEditing}
                             rows={3}
                             className={`w-full px-4 py-2 rounded-lg border ${
-                              isEditing ? "border-gray-300" : "border-transparent bg-gray-50"
+                              isEditing
+                                ? "border-gray-300"
+                                : "border-transparent bg-gray-50"
                             }`}
                           />
                         </div>
 
                         <div className="space-y-1">
-                          <label className="text-sm font-medium text-gray-700">Department</label>
+                          <label className="text-sm font-medium text-gray-700">
+                            Department
+                          </label>
                           <select
                             name="department"
                             value={formData.department}
                             onChange={handleInputChange}
                             disabled={!isEditing}
                             className={`w-full px-4 py-2 rounded-lg border ${
-                              isEditing ? "border-gray-300" : "border-transparent bg-gray-50"
+                              isEditing
+                                ? "border-gray-300"
+                                : "border-transparent bg-gray-50"
                             }`}
                           >
                             <option value="Engineering">Engineering</option>
@@ -214,14 +241,18 @@ export default function AccountSettings() {
 
               {activeTab === "security" && (
                 <div className="bg-white rounded-xl shadow-sm p-6">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-6">Security Settings</h3>
-                  
+                  <h3 className="text-xl font-semibold text-gray-800 mb-6">
+                    Security Settings
+                  </h3>
+
                   <div className="space-y-6">
                     <div className="p-4 border border-gray-200 rounded-lg">
                       <div className="flex justify-between items-center">
                         <div>
                           <h4 className="font-medium">Password</h4>
-                          <p className="text-sm text-gray-500">Last changed 3 months ago</p>
+                          <p className="text-sm text-gray-500">
+                            Last changed 3 months ago
+                          </p>
                         </div>
                         <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm">
                           Change Password
@@ -232,8 +263,12 @@ export default function AccountSettings() {
                     <div className="p-4 border border-gray-200 rounded-lg">
                       <div className="flex justify-between items-center">
                         <div>
-                          <h4 className="font-medium">Two-Factor Authentication</h4>
-                          <p className="text-sm text-gray-500">Add extra security to your account</p>
+                          <h4 className="font-medium">
+                            Two-Factor Authentication
+                          </h4>
+                          <p className="text-sm text-gray-500">
+                            Add extra security to your account
+                          </p>
                         </div>
                         <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm">
                           Enable 2FA
