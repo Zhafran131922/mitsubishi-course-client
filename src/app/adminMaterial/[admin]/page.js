@@ -1,11 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle, Clock, Signal } from "lucide-react";
 import Sidebar from "@/adminComponents/Sidebar";
-import MaterialModal from "@/adminComponents/MaterialModal"; // Import Modal
+import MaterialModal from "@/adminComponents/MaterialModal";
+import QuizModal from "@/adminComponents/QuizModal";
+import { fetchMaterials } from "../../../../lib/api";
 
 const TrainCard = ({
   title,
@@ -15,6 +18,7 @@ const TrainCard = ({
   image,
   route,
   onDelete,
+  topicId,
 }) => {
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-transform hover:scale-105">
@@ -34,7 +38,7 @@ const TrainCard = ({
           </div>
           <div className="flex items-center gap-1">
             <Clock className="w-4 h-4" />
-            <span>{duration}</span>
+            <span>{duration} Menit</span>
           </div>
         </div>
         <div className="mt-4 flex gap-2">
@@ -57,7 +61,10 @@ const TrainCard = ({
 
 const AdminMaterial = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
+  const [materials, setMaterials] = useState([]);
   const [newProgram, setNewProgram] = useState({
     title: "",
     author: "",
@@ -67,21 +74,21 @@ const AdminMaterial = () => {
     route: "",
   });
 
-  const courses = Array.from({ length: 34 }, (_, index) => ({
-    title: `Materi ${index + 1}`,
-    author: `Pengajar ${index + 1}`,
-    level:
-      index % 3 === 0
-        ? "Beginner"
-        : index % 3 === 1
-        ? "Intermediate"
-        : "Advanced",
-    duration: `${90 + (index % 5) * 30} Menit`,
-    image: `/assets/car${(index % 3) + 1}.jpg`,
-    route: `/courses/materi-${index + 1}`,
-  }));
+  useEffect(() => {
+    const getMaterials = async () => {
+      const data = await fetchMaterials();
+      setMaterials(data);
+    };
 
-  const filteredCourses = courses.filter((course) =>
+    getMaterials();
+  }, []);
+
+  const convertImagePath = (rawPath) => {
+    const filename = rawPath.split("\\").pop(); // Ambil nama file dari path Windows
+    return `http://localhost:3001/uploads/${filename}`;
+  };
+
+  const filteredCourses = materials.filter((course) =>
     course.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -90,10 +97,50 @@ const AdminMaterial = () => {
     setNewProgram((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleSaveQuiz = (newQuiz) => {
+    console.log("Quiz baru:", newQuiz);
+    // Lakukan sesuatu dengan data quiz baru, misalnya update state
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("New Program Added: ", newProgram);
     setIsModalOpen(false);
+  };
+
+  const handleDelete = async (id_topic, title) => {
+    const confirmed = window.confirm(
+      `Yakin ingin menghapus materi "${title}"?`
+    );
+    if (!confirmed) return;
+
+    try {
+      const token = localStorage.getItem("token"); // Pastikan token disimpan saat login
+
+      const response = await fetch(
+        `http://localhost:3001/api/v1/topics/${id_topic}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`, // Jika endpoint perlu token
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        setMaterials((prev) =>
+          prev.filter((item) => item.id_topic !== id_topic)
+        );
+        alert(`Materi "${title}" berhasil dihapus.`);
+      } else {
+        const err = await response.json();
+        alert(`Gagal menghapus materi: ${err.message}`);
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      alert("Terjadi kesalahan saat menghapus materi.");
+    }
   };
 
   return (
@@ -116,17 +163,30 @@ const AdminMaterial = () => {
         >
           Add Course
         </button>
+        <button
+          className="ml-4 px-4 py-2 bg-[#A70000] text-white rounded-md shadow hover:bg-red-600 transition"
+          onClick={() => setIsQuizModalOpen(true)}
+        >
+          Add Quiz
+        </button>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mt-6">
           {filteredCourses.map((course, index) => (
             <TrainCard
               key={index}
               title={course.title}
-              author={course.author}
+              author={`User ${course.created_by}`}
               level={course.level}
-              duration={course.duration}
-              image={course.image}
-              route={course.route}
-              onDelete={() => console.log(`Deleting ${course.title}`)}
+              duration={`${course.duration}`}
+              image={
+                course.picture
+                  ? `http://localhost:3001/uploads/${course.picture
+                      .split("\\")
+                      .pop()}`
+                  : "/default-image.jpg"
+              }
+              route={`/adminCourses/${course.id_topic}`}
+              onDelete={() => handleDelete(course.id_topic, course.title)}
             />
           ))}
         </div>
@@ -137,6 +197,12 @@ const AdminMaterial = () => {
           newProgram={newProgram}
           handleInputChange={handleInputChange}
           handleSubmit={handleSubmit}
+        />
+        <QuizModal
+          isOpen={isQuizModalOpen}
+          onClose={() => setIsQuizModalOpen(false)}
+          materials={materials}
+          onSave={handleSaveQuiz}
         />
       </div>
     </div>

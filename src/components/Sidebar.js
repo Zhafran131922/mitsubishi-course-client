@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
@@ -14,19 +14,32 @@ const Sidebar = ({ onExpand }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [expanded, setExpanded] = useState(false);
+  const [user, setUser] = useState(null);
 
-  const menuItems = [
-    { href: "/trainingSection", icon: <FaHeart />, label: "Training Section", match: ["/trainingSection", "/courses"] },
-    { href: "/programOverview", icon: <FaCalendarAlt />, label: "Program Overview", match: ["/programOverview"] },
-    { href: "/corporateService", icon: <FaGem />, label: "Corporate Service", match: ["/corporateService"] },
-    { href: "/about", icon: <FaCog />, label: "About", match: ["/about"] },
-  ];
+
+
+
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   const toggleExpand = () => {
     const newExpanded = !expanded;
     setExpanded(newExpanded);
     if (onExpand) onExpand(newExpanded);
   };
+
+  if (!user) return null;
+  const menuItems = [
+    { href: `/trainingSection/${user.username}`, icon: <FaHeart />, label: "Training Section", match: ["/trainingSection", "/courses"] },
+    { href: `/programOverview/${user.username}`, icon: <FaCalendarAlt />, label: "Program Overview", match: ["/programOverview"] },
+    { href: `/corporateService/${user.username}`, icon: <FaGem />, label: "Corporate Service", match: ["/corporateService"] },
+    { href: `/about/${user.username}`, icon: <FaCog />, label: "About", match: ["/about"] },
+  ];
 
   return (
     <>

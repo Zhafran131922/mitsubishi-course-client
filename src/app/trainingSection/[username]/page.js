@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Calendar from "@/components/Calendar";
 import TrainCards from "@/components/TrainCards";
@@ -10,6 +10,15 @@ import Header from "@/components/Header";
 
 export default function TrainingSection() {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      const parsedUser = JSON.parse(userData);
+      setUsername(parsedUser.username);
+    }
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
@@ -29,11 +38,10 @@ export default function TrainingSection() {
         <div className="w-full py-6 px-4 lg:py-8 lg:px-6 flex justify-center">
           <div className="max-w-[1500px] w-full">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-              Selamat Datang, user404!
+            Selamat Datang, {username || "User"}!
             </h1>
           </div>
         </div>
-
         {/* Main Content Grid */}
         <div className="p-4 lg:p-6 flex justify-center">
           <div className="max-w-[1500px] w-full flex flex-col xl:flex-row gap-6">

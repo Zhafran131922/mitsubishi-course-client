@@ -14,9 +14,9 @@ const Sidebar = () => {
   const [expanded, setExpanded] = useState(false);
 
   const menuItems = [
-    { href: "/adminAgenda", icon: <FaClipboardList />, label: "Agenda" },
-    { href: "/adminProgram", icon: <FaFilm />, label: "Program" },
-    { href: "/adminMaterial", icon: <FaHeadset />, label: "Material" },
+    { href: "/adminAgenda/admin", icon: <FaClipboardList />, label: "Agenda" },
+    { href: "/adminProgram/admin", icon: <FaFilm />, label: "Program" },
+    { href: "/adminMaterial/admin", icon: <FaHeadset />, label: "Material" },
     // { href: "/task", icon: <FaInfoCircle />, label: "Task" },
   ];
 
