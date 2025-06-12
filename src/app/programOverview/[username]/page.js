@@ -1,422 +1,312 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import {
-  CheckCircle,
-  Clock,
-  Wifi,
-  MapPin,
-  Award,
-  Users,
-  Presentation,
-  BookOpen,
-  Clipboard,
-  Filter,
-} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
+import ProgramModal from "@/adminComponents/ProgramModal";
+import ProgramCard from "@/components/ProgramCard";
+import { Filter, Wifi, MapPin } from "lucide-react";
+import { ProgramAPI } from "../../../../lib/api";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
-const ProgramCard = ({ program }) => {
-  const getActivityIcon = () => {
-    switch (program.type) {
-      case "Contest":
-        return <Award className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600" />;
-      case "Workshop":
-        return <Users className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />;
-      case "Presentation":
-        return (
-          <Presentation className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
-        );
-      case "Training":
-        return <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />;
-      case "Assessment":
-        return <Clipboard className="w-4 h-4 sm:w-5 sm:h-5 text-red-600" />;
-      default:
-        return program.isOnline ? (
-          <Wifi className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
-        ) : (
-          <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-red-600" />
-        );
-    }
-  };
-
-  const getApplicationBadge = (app, key) => {
-    const baseClass = "px-2 py-1 rounded-full text-xs font-medium mr-1 mb-1";
-
-    if (app.includes("Teams") || app.includes("Zoom")) {
-      return (
-        <span key={key} className={`${baseClass} bg-blue-100 text-blue-800`}>
-          {app}
-        </span>
-      );
-    } else if (app.includes("LMS")) {
-      return (
-        <span
-          key={key}
-          className={`${baseClass} bg-purple-100 text-purple-800`}
-        >
-          {app}
-        </span>
-      );
-    } else {
-      return (
-        <span key={key} className={`${baseClass} bg-gray-100 text-gray-800`}>
-          {app}
-        </span>
-      );
-    }
-  };
-
-  return (
-    <div className="bg-white rounded-lg sm:rounded-xl shadow-sm sm:shadow-md overflow-hidden transition-transform hover:scale-[1.02] flex flex-col h-full border border-gray-200">
-      {program.image && (
-        <div className="relative w-full h-32 sm:h-40">
-          <Image
-            src={program.image}
-            alt={program.title}
-            layout="fill"
-            objectFit="cover"
-            className="transition-opacity opacity-0 duration-300"
-            onLoadingComplete={(image) => image.classList.remove("opacity-0")}
-          />
-          <div
-            className={`absolute top-2 right-2 px-2 py-1 rounded-md text-xs font-semibold flex items-center gap-1 ${
-              program.isOnline
-                ? "bg-blue-100 text-blue-800"
-                : "bg-red-100 text-red-800"
-            }`}
-          >
-            {program.isOnline ? (
-              <>
-                <Wifi className="w-3 h-3" />
-                <span className="hidden xs:inline">Online</span>
-              </>
-            ) : (
-              <>
-                <MapPin className="w-3 h-3" />
-                <span className="hidden xs:inline">Offline</span>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-
-      <div className="p-3 sm:p-4 flex flex-col flex-grow">
-        <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-          {getActivityIcon()}
-          <span
-            className={`text-xs font-semibold px-2 py-1 rounded-md ${
-              program.type === "Contest"
-                ? "bg-yellow-100 text-yellow-800"
-                : program.type === "Workshop"
-                ? "bg-blue-100 text-blue-800"
-                : program.type === "Presentation"
-                ? "bg-purple-100 text-purple-800"
-                : program.type === "Training"
-                ? "bg-green-100 text-green-800"
-                : program.type === "Assessment"
-                ? "bg-red-100 text-red-800"
-                : "bg-gray-100 text-gray-800"
-            }`}
-          >
-            {program.type || (program.isOnline ? "Online" : "Offline")}
-          </span>
-        </div>
-
-        <h2 className="text-base sm:text-lg font-bold line-clamp-2">
-          {program.title}
-        </h2>
-
-        {!program.isOnline && program.location && (
-          <div className="flex items-center gap-2 text-gray-600 text-xs sm:text-sm mt-1">
-            <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
-            <span className="line-clamp-1">{program.location}</span>
-          </div>
-        )}
-
-        <div className="mt-2 sm:mt-3 mb-3 sm:mb-4">
-          <div className="flex items-center gap-2 text-gray-600 text-xs sm:text-sm">
-            <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
-            <span>{program.duration}</span>
-          </div>
-
-          {program.isOnline && program.application && (
-            <div className="mt-1 sm:mt-2">
-              <p className="text-xs text-gray-500 mb-1">Platform:</p>
-              <div className="flex flex-wrap">
-                {program.application
-                  .split(",")
-                  .map((app, i) => getApplicationBadge(app.trim(), i))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        <Link href={program.route} className="mt-auto">
-          <button
-            className={`w-full py-1.5 sm:py-2 rounded-md text-sm sm:text-base font-medium transition ${
-              program.isOnline
-                ? "bg-[#A70000] hover:bg-blue-700 text-white"
-                : "bg-[#A70000] hover:bg-red-700 text-white"
-            }`}
-          >
-            {program.isOnline ? "Join Online" : "Join Offline"}
-          </button>
-        </Link>
-      </div>
-    </div>
-  );
-};
+const programTypes = [
+  "Contest",
+  "Workshop",
+  "Presentation",
+  "Training",
+  "Assessment",
+  "Exhibition",
+];
 
 const ProgramOverview = () => {
+  const [programs, setPrograms] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sidebarExpanded, setSidebarExpanded] = useState(false);
-  const [filter, setFilter] = useState({
-    delivery: "all",
-    type: "all",
-  });
+  const [filter, setFilter] = useState({ delivery: "all", type: "all" });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentProgram, setCurrentProgram] = useState(null);
+  const router = useRouter();
+  const [error, setError] = useState(null);
+  const [authorized, setAuthorized] = useState(null);
 
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  useEffect(() => {
+    const fetchPrograms = async () => {
+      try {
+        const programsData = await ProgramAPI.getAll();
 
-  const allPrograms = [
+        const mappedPrograms = Array.isArray(programsData)
+          ? programsData.map((p) => ({
+              id: p.id,
+              title: p.title,
+              type: p.jenis_program || "General",
+              duration: `${p.duration} menit`,
+              application: p.platform,
+              isOnline: p.status.toLowerCase() === "online",
+              image: p.content
+                ? `http://localhost:3001/uploads/${p.content.split("\\").pop()}`
+                : "/default-image.jpg",
+              route: `/programs/${p.id}`,
+            }))
+          : [];
 
-    {
-      title: "Annual Theory Test Competition",
-      type: "Contest",
-      duration: "120 Minutes",
-      application: "MOODLE (LMS)",
-      route: "/programs/contest-theory-test",
-      isOnline: true,
-      image: "/assets/car1.jpg",
-    },
-    {
-      title: "UI/UX Design Workshop",
-      type: "Workshop",
-      duration: "180 Minutes",
-      application: "Microsoft Teams, Zoom",
-      route: "/programs/design-workshop",
-      isOnline: true,
-      image: "/assets/car2.jpg",
-    },
-    {
-      title: "Product Innovation Presentation",
-      type: "Presentation",
-      duration: "90 Minutes",
-      application: "Zoom",
-      route: "/programs/innovation-presentation",
-      isOnline: true,
-      image: "/assets/car3.jpg",
-    },
-    {
-      title: "New Product Knowledge Training",
-      type: "Training",
-      duration: "240 Minutes",
-      application: "Microsoft Teams, LMS",
-      route: "/programs/product-training",
-      isOnline: true,
-      image: "/assets/car2.jpg",
-    },
-    // Offline Programs
-    {
-      title: "Hands-on Technical Workshop",
-      type: "Workshop",
-      duration: "Full Day",
-      route: "/programs/technical-workshop",
-      isOnline: false,
-      location: "Jakarta Main Campus, Room 301",
-      image: "/assets/car3.jpg",
-    },
-    {
-      title: "Annual Product Exhibition",
-      type: "Exhibition",
-      duration: "2 Days",
-      route: "/programs/product-exhibition",
-      isOnline: false,
-      location: "Convention Center, Central Jakarta",
-      image: "/assets/car2.jpg",
-    },
-    {
-      title: "Leadership Training Program",
-      type: "Training",
-      duration: "3 Days",
-      route: "/programs/leadership-training",
-      isOnline: false,
-      location: "Bandung Training Center",
-      image: "/assets/car1.jpg",
-    },
-    {
-      title: "Final Project Presentation",
-      type: "Presentation",
-      duration: "4 Hours",
-      route: "/programs/final-presentation",
-      isOnline: false,
-      location: "Surabaya Campus, Auditorium",
-      image: "/assets/car2.jpg",
-    },
-  ];
+        setPrograms(mappedPrograms);
+        setIsLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setIsLoading(false);
+      }
+    };
 
-  const filteredPrograms = allPrograms.filter((program) => {
-    const matchesSearch = program.title
+    fetchPrograms();
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setAuthorized(false);
+    } else {
+      setAuthorized(true);
+    }
+  }, []);
+
+  if (authorized === null) {
+    return null; // bisa diganti dengan spinner kalau mau
+  }
+
+  if (!authorized) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white px-4 text-center">
+        <h1 className="text-xl font-bold mb-4 text-yellow-400">
+          ⚠️ Akses Ditolak
+        </h1>
+        <p className="text-sm text-gray-300">
+          Anda belum login. Silakan login untuk mengakses halaman ini.
+        </p>
+      </div>
+    );
+  }
+
+  const handleAddProgram = async (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+    const formData = new FormData();
+
+    formData.append("title", form.title.value);
+    formData.append("jenis_program", form.jenis_program.value);
+    formData.append("description", form.description.value);
+    formData.append("status", form.status.value.toLowerCase());
+    formData.append("platform", form.platform.value);
+    formData.append("date_program", form.creationDate.value);
+    formData.append("time_program", form.creationTime.value);
+    formData.append("duration", form.estimatedDuration.value);
+
+    const imageFile = form.contentImage.files[0];
+    if (imageFile) {
+      formData.append("content", imageFile);
+    }
+
+    try {
+      const data = await ProgramAPI.create(formData);
+      console.log("Program added:", data);
+
+      form.reset();
+      alert("Program berhasil ditambahkan!");
+    } catch (error) {
+      console.error("Error adding program:", error.message);
+      alert("Gagal menambahkan program: " + error.message);
+    }
+  };
+
+  const onlineCount = programs.filter((p) => p.isOnline).length;
+  const offlineCount = programs.filter((p) => !p.isOnline).length;
+
+  const filteredPrograms = programs.filter(({ title, type, isOnline }) => {
+    const matchesSearch = title
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
+
     const matchesDelivery =
-      filter.delivery === "all" ||
-      (filter.delivery === "online" && program.isOnline) ||
-      (filter.delivery === "offline" && !program.isOnline);
-    const matchesType = filter.type === "all" || program.type === filter.type;
+      filter.delivery.toLowerCase() === "all" ||
+      (filter.delivery.toLowerCase() === "online" && isOnline) ||
+      (filter.delivery.toLowerCase() === "offline" && !isOnline);
+
+    const matchesType =
+      filter.type === "all" || type.toLowerCase() === filter.type.toLowerCase();
 
     return matchesSearch && matchesDelivery && matchesType;
   });
 
-  const programTypes = [...new Set(allPrograms.map((program) => program.type))];
-  const onlineCount = allPrograms.filter((p) => p.isOnline).length;
-  const offlineCount = allPrograms.filter((p) => !p.isOnline).length;
+  const handleJoinProgram = (program) => {
+    if (program.isOnline) {
+      // Logic for joining online program
+      alert(`Joining online program: ${program.title}`);
+      // You can replace this with actual join logic
+      // router.push(program.route);
+    } else {
+      // Logic for joining offline program
+      alert(`Joining offline program: ${program.title}`);
+    }
+  };
+
+  const handleNavigateToProgram = (program) => {
+    router.push(`/programDetail?id=${program.id}`);
+  };
+
+  const handleEdit = (program) => {
+    setCurrentProgram(program);
+    setIsModalOpen(true);
+  };
+
+  const handleInputChange = ({ target: { name, value } }) => {
+    setCurrentProgram((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (formData) => {
+    try {
+      if (currentProgram) {
+        const updatedProgram = await ProgramAPI.update(
+          currentProgram.id,
+          formData
+        );
+        setPrograms(
+          programs.map((p) => (p.id === currentProgram.id ? updatedProgram : p))
+        );
+      } else {
+        const newProgram = await ProgramAPI.create(formData);
+        setPrograms([...programs, newProgram]);
+      }
+      setIsModalOpen(false);
+      setCurrentProgram(null);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const resetFilters = () => {
+    setSearchTerm("");
+    setFilter({ delivery: "all", type: "all" });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col lg:flex-row min-h-screen">
+        <Sidebar className="w-full lg:w-30 bg-gray-800 text-white fixed lg:relative top-0 left-0" />
+        <div className="lg:ml-30 p-6 w-full flex justify-center items-center">
+          <p>Loading programs...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col lg:flex-row min-h-screen">
+        <Sidebar className="w-full lg:w-30 bg-gray-800 text-white fixed lg:relative top-0 left-0" />
+        <div className="lg:ml-30 p-6 w-full flex justify-center items-center">
+          <p className="text-red-500">Error: {error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
-      <Sidebar
-        onExpand={setSidebarExpanded}
-        className="w-full lg:w-30 h-auto lg:h-screen bg-gray-800 text-white fixed lg:relative top-0 left-0 z-20"
-      />
+    <div className="flex flex-col lg:flex-row min-h-screen">
+      <Sidebar className="w-full lg:w-30 bg-gray-800 text-white fixed lg:relative top-0 left-0" />
 
-      <div
-        className={`flex-1 transition-all duration-300 ${
-          sidebarExpanded ? "lg:ml-70" : "lg:ml-30"
-        } pt-4 sm:pt-6 pb-6 px-4 sm:px-6`}
-      >
-        <div className="flex items-center mb-4 sm:mb-6">
-          <span className="bg-black text-white px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-bold transform -skew-x-12">
-            ☰ All Programs
+      <div className="lg:ml-30 p-6 w-full">
+        {/* Page Header */}
+        <div className="flex items-center mb-6">
+          <span className="bg-black text-white px-4 py-2 text-sm font-bold transform -skew-x-12">
+            ☰ Admin Page
+          </span>
+          <span className="bg-[#A70000] text-white px-4 py-2 text-sm font-bold transform -skew-x-12 ml-0">
+            Program
           </span>
         </div>
 
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 sm:mb-6 gap-3">
-          <h1 className="text-xl sm:text-2xl font-bold">Available Programs</h1>
-
-          <div className="w-full md:w-auto flex-1 md:flex-none">
+        {/* Top Bar */}
+        <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+          <h1 className="text-2xl font-bold text-center md:text-left">
+            Manage Programs
+          </h1>
+          <div className="flex items-center gap-4">
             <input
               type="text"
               placeholder="Search programs..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm text-sm sm:text-base"
+              className="px-4 py-2 w-full md:w-72 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500"
             />
           </div>
         </div>
 
-        {/* Mobile Filter Button */}
-        <button
-          onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-          className="lg:hidden flex items-center gap-2 mb-4 px-3 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium shadow-sm"
-        >
-          <Filter className="w-4 h-4" />
-          <span>Filters</span>
-          {(filter.delivery !== "all" || filter.type !== "all") && (
-            <span className="ml-auto px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs">
-              {
-                [filter.delivery !== "all", filter.type !== "all"].filter(
-                  Boolean
-                ).length
-              }
-            </span>
-          )}
-        </button>
-
-        {/* Filter Section */}
-        <div
-          className={`${
-            mobileFiltersOpen ? "block" : "hidden"
-          } lg:block mb-6 bg-white sm:bg-gray-50 p-3 sm:p-4 rounded-lg shadow-sm sm:shadow-none border border-gray-200 sm:border-none`}
-        >
+        {/* Filters */}
+        <div className="mb-6 bg-gray-50 p-4 rounded-lg">
           <div className="flex items-center gap-2 mb-3 text-gray-700">
-            <Filter className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="font-medium text-sm sm:text-base">
-              Filter Programs
-            </span>
-            {mobileFiltersOpen && (
-              <button
-                onClick={() => setMobileFiltersOpen(false)}
-                className="ml-auto text-gray-500 hover:text-gray-700"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-            )}
+            <Filter className="w-5 h-5" />
+            <span className="font-medium">Filter Programs</span>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4">
-            {/* Delivery Method Filter */}
-            <div className="flex-1 min-w-[200px]">
-              <h3 className="text-xs sm:text-sm font-medium text-gray-700 mb-2">
+          <div className="flex flex-wrap gap-6">
+            {/* Delivery Filter */}
+            <div>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">
                 Delivery Method
               </h3>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={() => setFilter({ ...filter, delivery: "all" })}
-                  className={`px-2 py-1 sm:px-3 sm:py-1 text-xs sm:text-sm rounded-md flex items-center gap-1 ${
-                    filter.delivery === "all"
-                      ? "bg-gray-800 text-white"
-                      : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
-                  }`}
-                >
-                  <span>All</span>
-                  <span className="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-800">
-                    {allPrograms.length}
-                  </span>
-                </button>
-
-                <button
-                  onClick={() => setFilter({ ...filter, delivery: "online" })}
-                  className={`px-2 py-1 sm:px-3 sm:py-1 text-xs sm:text-sm rounded-md flex items-center gap-1 ${
-                    filter.delivery === "online"
-                      ? "bg-blue-600 text-white"
-                      : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
-                  }`}
-                >
-                  <Wifi className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span>Online</span>
-                  <span className="text-xs px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-800">
-                    {onlineCount}
-                  </span>
-                </button>
-
-                <button
-                  onClick={() => setFilter({ ...filter, delivery: "offline" })}
-                  className={`px-2 py-1 sm:px-3 sm:py-1 text-xs sm:text-sm rounded-md flex items-center gap-1 ${
-                    filter.delivery === "offline"
-                      ? "bg-red-600 text-white"
-                      : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
-                  }`}
-                >
-                  <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span>Offline</span>
-                  <span className="text-xs px-1.5 py-0.5 rounded-full bg-red-100 text-red-800">
-                    {offlineCount}
-                  </span>
-                </button>
+              <div className="flex gap-2 flex-wrap">
+                {[
+                  { label: "All", value: "all", count: programs.length },
+                  {
+                    label: "Online",
+                    value: "online",
+                    count: onlineCount,
+                    icon: <Wifi className="w-4 h-4" />,
+                  },
+                  {
+                    label: "Offline",
+                    value: "offline",
+                    count: offlineCount,
+                    icon: <MapPin className="w-4 h-4" />,
+                  },
+                ].map(({ label, value, count, icon }) => (
+                  <button
+                    key={value}
+                    onClick={() =>
+                      setFilter((prev) => ({ ...prev, delivery: value }))
+                    }
+                    className={`px-3 py-1 text-sm rounded-md flex items-center gap-1 ${
+                      filter.delivery === value
+                        ? value === "online"
+                          ? "bg-blue-600 text-white"
+                          : value === "offline"
+                          ? "bg-red-600 text-white"
+                          : "bg-gray-800 text-white"
+                        : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
+                    }`}
+                  >
+                    {icon}
+                    {label}
+                    <span className="text-xs text-black bg-gray-100 rounded-full px-1.5 py-0.5">
+                      {count}
+                    </span>
+                  </button>
+                ))}
               </div>
             </div>
 
             {/* Program Type Filter */}
-            <div className="flex-1 min-w-[200px]">
-              <h3 className="text-xs sm:text-sm font-medium text-gray-700 mb-2">
+            <div>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">
                 Program Type
               </h3>
               <div className="flex flex-wrap gap-2">
                 <button
-                  onClick={() => setFilter({ ...filter, type: "all" })}
-                  className={`px-2 py-1 sm:px-3 sm:py-1 text-xs sm:text-sm rounded-md ${
+                  onClick={() =>
+                    setFilter((prev) => ({ ...prev, type: "all" }))
+                  }
+                  className={`px-3 py-1 text-sm rounded-md ${
                     filter.type === "all"
                       ? "bg-gray-800 text-white"
                       : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
@@ -424,22 +314,13 @@ const ProgramOverview = () => {
                 >
                   All Types
                 </button>
-
                 {programTypes.map((type) => (
                   <button
                     key={type}
-                    onClick={() => setFilter({ ...filter, type })}
-                    className={`px-2 py-1 sm:px-3 sm:py-1 text-xs sm:text-sm rounded-md ${
+                    onClick={() => setFilter((prev) => ({ ...prev, type }))}
+                    className={`px-3 py-1 text-sm rounded-md ${
                       filter.type === type
-                        ? type === "Contest"
-                          ? "bg-yellow-100 text-yellow-800 border border-yellow-200"
-                          : type === "Workshop"
-                          ? "bg-blue-100 text-blue-800 border border-blue-200"
-                          : type === "Presentation"
-                          ? "bg-purple-100 text-purple-800 border border-purple-200"
-                          : type === "Training"
-                          ? "bg-green-100 text-green-800 border border-green-200"
-                          : "bg-red-100 text-red-800 border border-red-200"
+                        ? "bg-yellow-100 text-yellow-800 border border-yellow-200"
                         : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
                     }`}
                   >
@@ -451,51 +332,46 @@ const ProgramOverview = () => {
           </div>
         </div>
 
-        <div className="mb-3 sm:mb-4 text-xs sm:text-sm text-gray-500">
-          Showing {filteredPrograms.length} of {allPrograms.length} programs
+        {/* Filtered Info */}
+        <div className="mb-4 text-sm text-gray-500">
+          Showing {filteredPrograms.length} of {programs.length} programs
           {(filter.delivery !== "all" || filter.type !== "all") && (
-            <span className="ml-1 sm:ml-2">
-              (Filtered:
-              {filter.delivery !== "all" && ` ${filter.delivery}`}
+            <span className="ml-2">
+              (Filtered:{filter.delivery !== "all" && ` ${filter.delivery}`}
               {filter.type !== "all" && ` ${filter.type}`})
             </span>
           )}
           {searchTerm && ` matching "${searchTerm}"`}
         </div>
 
+        {/* Program Cards or Empty State */}
         {filteredPrograms.length > 0 ? (
-          <div
-            className={`grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 ${
-              sidebarExpanded
-                ? "lg:grid-cols-3 xl:grid-cols-4"
-                : "lg:grid-cols-4 xl:grid-cols-5"
-            } gap-4 sm:gap-6`}
-          >
-            {filteredPrograms.map((program, index) => (
-              <ProgramCard key={index} program={program} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredPrograms.map((program) => (
+              <ProgramCard
+                key={program.id}
+                program={program}
+                onJoin={handleJoinProgram}
+                onClick={handleNavigateToProgram}
+              />
             ))}
           </div>
         ) : (
-          <div className="text-center py-8 sm:py-12 bg-white sm:bg-gray-50 rounded-lg shadow-sm sm:shadow-none border border-gray-200 sm:border-none">
-            <h3 className="text-base sm:text-lg font-medium text-gray-500">
+          <div className="text-center py-12 bg-gray-50 rounded-lg">
+            <h3 className="text-lg font-medium text-gray-500">
               No programs found
             </h3>
-            <p className="text-gray-400 mt-1 text-sm sm:text-base">
-              {searchTerm
-                ? `Try a different search term or reset filters`
-                : filter.delivery !== "all" || filter.type !== "all"
-                ? `No programs match your filters`
+            <p className="text-gray-400 mt-1">
+              {searchTerm || filter.delivery !== "all" || filter.type !== "all"
+                ? "Try a different search or reset filters"
                 : "No programs available"}
             </p>
             {(searchTerm ||
               filter.delivery !== "all" ||
               filter.type !== "all") && (
               <button
-                onClick={() => {
-                  setSearchTerm("");
-                  setFilter({ delivery: "all", type: "all" });
-                }}
-                className="mt-3 sm:mt-4 px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs sm:text-sm"
+                onClick={resetFilters}
+                className="mt-4 px-4 py-2 bg-[#A70000] text-white rounded-md hover:bg-red-700 text-sm"
               >
                 Reset All Filters
               </button>
@@ -503,6 +379,18 @@ const ProgramOverview = () => {
           </div>
         )}
       </div>
+
+      {/* Modal */}
+      <ProgramModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        newProgram={programs}
+        handleInputChange={handleInputChange}
+        handleSubmit={handleSubmit}
+        onSubmit={handleAddProgram}
+        currentProgram={currentProgram}
+        programTypes={programTypes}
+      />
     </div>
   );
 };

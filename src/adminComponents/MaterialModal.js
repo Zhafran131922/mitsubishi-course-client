@@ -5,14 +5,15 @@ export default function CreateTopicModal({ isOpen, onClose, token }) {
   const [formData, setFormData] = useState({
     title: "",
     level: "",
-    idUser: "",
+    idUser: "1",
     duration: "",
+    deadline: "",
     picture: null,
     materials: [
       {
         title: "",
         urlLink: "",
-        markDone: false,
+        overview: "", // Changed from markDone to overview
         modules: [],
       },
     ],
@@ -65,7 +66,7 @@ export default function CreateTopicModal({ isOpen, onClose, token }) {
         {
           title: "",
           urlLink: "",
-          markDone: false,
+          overview: "", // Changed from markDone to overview
           modules: [],
         },
       ],
@@ -102,6 +103,7 @@ export default function CreateTopicModal({ isOpen, onClose, token }) {
       if (
         !material.title ||
         !material.urlLink ||
+        !material.overview || // Added overview validation
         material.modules.length === 0
       ) {
         alert("Semua field material wajib diisi.");
@@ -123,6 +125,7 @@ export default function CreateTopicModal({ isOpen, onClose, token }) {
       topicForm.append("id_user", formData.idUser);
       topicForm.append("duration", formData.duration);
       topicForm.append("picture", formData.picture);
+      topicForm.append("deadline", formData.deadline);
 
       const topicRes = await fetch("http://localhost:3001/api/v1/topics", {
         method: "POST",
@@ -145,7 +148,7 @@ export default function CreateTopicModal({ isOpen, onClose, token }) {
           materialForm.append("topicId", topicId);
           materialForm.append("title", material.title);
           materialForm.append("url_link", material.urlLink);
-          materialForm.append("mark_done", material.markDone);
+          materialForm.append("overview", material.overview); // Changed from mark_done to overview
           material.modules.forEach((module) =>
             materialForm.append("module", module)
           );
@@ -199,14 +202,7 @@ export default function CreateTopicModal({ isOpen, onClose, token }) {
             onChange={handleChange}
             required
           />
-          {/* <input
-            name="level"
-            placeholder="Level (Beginner/Intermediate/Advanced)"
-            className="w-full border rounded p-2"
-            value={formData.level}
-            onChange={handleChange}
-            required
-          /> */}
+
           <select
             name="level"
             value={formData.level}
@@ -220,12 +216,14 @@ export default function CreateTopicModal({ isOpen, onClose, token }) {
             <option value="Advanced">Advanced</option>
           </select>
 
+          <input type="hidden" name="idUser" value={formData.idUser} />
+
           <input
-            name="idUser"
-            type="number"
-            placeholder="User ID"
+            name="deadline"
+            type="date"
+            placeholder="Deadline"
             className="w-full border rounded p-2"
-            value={formData.idUser}
+            value={formData.deadline}
             onChange={handleChange}
             required
           />
@@ -291,6 +289,15 @@ export default function CreateTopicModal({ isOpen, onClose, token }) {
                 onChange={(e) => handleMaterialChange(index, e)}
                 required
               />
+              <textarea
+                name="overview"
+                placeholder="Overview/Description"
+                className="w-full border p-2 rounded mb-2"
+                value={material.overview}
+                onChange={(e) => handleMaterialChange(index, e)}
+                rows={3}
+                required
+              />
               <input
                 type="file"
                 name="modules"
@@ -299,15 +306,6 @@ export default function CreateTopicModal({ isOpen, onClose, token }) {
                 onChange={(e) => handleMaterialChange(index, e)}
                 required
               />
-              <label className="flex items-center space-x-2">
-                <input
-                  name="markDone"
-                  type="checkbox"
-                  checked={material.markDone}
-                  onChange={(e) => handleMaterialChange(index, e)}
-                />
-                <span>Tandai sebagai selesai</span>
-              </label>
             </div>
           ))}
 

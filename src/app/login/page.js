@@ -12,7 +12,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loginAttempts, setLoginAttempts] = useState(0);
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Slideshow images
@@ -49,7 +49,7 @@ export default function Login() {
     } catch (error) {
       setLoginAttempts((prev) => {
         const newAttempts = prev + 1;
-        if (newAttempts >= 3) {
+        if (newAttempts >= 0) {
           setShowForgotPassword(true);
         }
         return newAttempts;

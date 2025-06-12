@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { fetchProgramById } from "../../../lib/api";
-import Sidebar from "@/adminComponents/Sidebar";
+import Sidebar from "@/components/Sidebar";
 
 const AdminPageProgram = () => {
   const [program, setProgram] = useState(null);

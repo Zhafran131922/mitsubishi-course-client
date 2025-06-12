@@ -1,265 +1,327 @@
-"use client";
+import React, { useState } from "react";
 
-import React, { useState, useEffect } from "react";
+const ProgramModal = ({ isOpen, onClose, onSuccess, token: tokenProp }) => {
+  const [form, setForm] = useState({
+    title: "",
+    description: "",
+    status: "offline",
+    url_link: "",
+    date_program: "",
+    time_program: "",
+    duration: 20,
+    platform: "Zoom",
+    jenis_program: "Presentation",
+    content: null,
+  });
 
-const ProgramModal = ({ isOpen, onClose, onSubmit, currentProgram }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (isOpen) {
-      setIsMounted(true);
-      setTimeout(() => setIsVisible(true), 10);
-    } else {
-      setIsVisible(false);
-      const timer = setTimeout(() => setIsMounted(false), 300);
-      return () => clearTimeout(timer);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setForm((prev) => ({ ...prev, content: file }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+
+    try {
+      const token = tokenProp || localStorage.getItem("token") || "";
+
+      const formData = new FormData();
+      Object.entries(form).forEach(([key, val]) => {
+        if (key === "url_link" && form.status !== "online") return;
+        if (key === "content") {
+          if (val) formData.append("content", val);
+        } else {
+          formData.append(key, val);
+        }
+      });
+
+      const response = await fetch("http://localhost:3001/api/v1/program", {
+        method: "POST",
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error("Gagal menambah program");
+
+      if (typeof onSuccess === "function") onSuccess();
+      onClose();
+    } catch (err) {
+      console.error(err);
+      alert("Terjadi kesalahan saat mengirim data. Silakan coba lagi.");
+    } finally {
+      setSubmitting(false);
     }
-  }, [isOpen]);
+  };
 
-  if (!isMounted) return null;
+  if (!isOpen) return null;
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
-      {/* Backdrop with blur effect */}
-      <div 
-        className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      
-      {/* Modal container with slide-up animation */}
-      <div 
-        className={`relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-2xl mx-4 transform transition-all duration-300 ${isVisible ? 'translate-y-0' : 'translate-y-10'}`}
-      >
-        <div className="p-6">
-          {/* Header with gradient border */}
-          <div className="border-b border-transparent bg-gradient-to-r from-red-600 to-red-800 rounded-t-lg -mx-6 -mt-6 p-6">
-            <h2 className="text-2xl font-bold text-white">
-              {currentProgram ? "Edit Program" : "Add New Program"}
-            </h2>
-          </div>
-
-          <form onSubmit={onSubmit}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-              {/* Title */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Title<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="title"
-                  defaultValue={currentProgram?.title || ""}
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all"
-                  placeholder="Enter program title"
-                />
-              </div>
-
-              {/* Jenis Program */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Jenis Program<span className="text-red-500">*</span>
-                </label>
-                <select
-                  name="jenis_program"
-                  defaultValue={currentProgram?.jenis_program || ""}
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent dark:bg-gray-700 dark:text-white appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWNoZXZyb24tZG93biI+PHBhdGggZD0ibTYgOSA2IDYgNi02Ii8+PC9zdmc+')] bg-no-repeat bg-[center_right_1rem] bg-[length:1.5rem] transition-all"
-                >
-                  <option value="">Select Type</option>
-                  <option value="Contest">Contest</option>
-                  <option value="Workshop">Workshop</option>
-                  <option value="Presentation">Presentation</option>
-                  <option value="Training">Training</option>
-                  <option value="Assessment">Assessment</option>
-                  <option value="Exhibition">Exhibition</option>
-                </select>
-              </div>
-
-              {/* Description */}
-              <div className="mb-4 col-span-2">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Description<span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  name="description"
-                  defaultValue={currentProgram?.description || ""}
-                  required
-                  rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all"
-                  placeholder="Enter program description"
-                />
-              </div>
-
-              {/* Content (Image) */}
-              <div className="mb-4 col-span-2">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Content Image
-                </label>
-                <div className="flex items-center justify-center w-full">
-                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
-                      </svg>
-                      <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">PNG, JPG (MAX. 2MB)</p>
-                    </div>
-                    <input 
-                      type="file" 
-                      name="contentImage" 
-                      accept="image/*" 
-                      className="hidden" 
-                    />
-                  </label>
-                </div>
-                {currentProgram?.imageUrl && (
-                  <div className="mt-4 flex items-center">
-                    <div className="relative mr-4">
-                      <img
-                        src={currentProgram.imageUrl}
-                        alt="Program content"
-                        className="h-20 w-20 object-cover rounded-lg border border-gray-200 dark:border-gray-600"
-                      />
-                      <button 
-                        type="button"
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          // Handle image removal here
-                        }}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M18 6 6 18"/>
-                          <path d="m6 6 12 12"/>
-                        </svg>
-                      </button>
-                    </div>
-                    <span className="text-sm text-gray-600 dark:text-gray-300">Current Image</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Status */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Status<span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <select
-                    name="status"
-                    defaultValue={currentProgram?.status || "Offline"}
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent dark:bg-gray-700 dark:text-white appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWNoZXZyb24tZG93biI+PHBhdGggZD0ibTYgOSA2IDYgNi02Ii8+PC9zdmc+')] bg-no-repeat bg-[center_right_1rem] bg-[length:1.5rem] transition-all"
-                  >
-                    <option value="Online">Online</option>
-                    <option value="Offline">Offline</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Platform */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Platform<span className="text-red-500">*</span>
-                </label>
-                <select
-                  name="platform"
-                  defaultValue={currentProgram?.platform || ""}
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent dark:bg-gray-700 dark:text-white appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWNoZXZyb24tZG93biI+PHBhdGggZD0ibTYgOSA2IDYgNi02Ii8+PC9zdmc+')] bg-no-repeat bg-[center_right_1rem] bg-[length:1.5rem] transition-all"
-                >
-                  <option value="">Select Platform</option>
-                  <option value="Zoom">Zoom</option>
-                  <option value="Google Meet">Google Meet</option>
-                  <option value="Microsoft Teams">Microsoft Teams</option>
-                  <option value="On-site">On-site</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-
-              {/* Creation Date */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Creation Date<span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="date"
-                    name="creationDate"
-                    defaultValue={currentProgram?.creationDate || ""}
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all"
-                  />
-                </div>
-              </div>
-
-              {/* Creation Time */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Creation Time<span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="time"
-                    name="creationTime"
-                    defaultValue={currentProgram?.creationTime || ""}
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all"
-                  />
-                </div>
-              </div>
-
-              {/* Estimated Duration */}
-              <div className="mb-4 col-span-2">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Estimated Duration (minutes)<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="number"
-                  name="estimatedDuration"
-                  defaultValue={currentProgram?.estimatedDuration || ""}
-                  required
-                  min="1"
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all"
-                  placeholder="Enter duration in minutes"
-                />
-              </div>
-            </div>
-
-            {/* Footer with action buttons */}
-            <div className="flex justify-end gap-4 mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
-              <button
-                type="button"
-                className="px-6 py-2.5 text-gray-700 dark:text-gray-300 bg-transparent border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50"
-                onClick={onClose}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-6 py-2.5 text-white bg-gradient-to-r from-red-600 to-red-800 rounded-lg hover:from-red-700 hover:to-red-900 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 shadow-md hover:shadow-lg"
-              >
-                {currentProgram ? "Update Program" : "Add Program"}
-                <span className="ml-2">→</span>
-              </button>
-            </div>
-          </form>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="w-full max-w-2xl rounded-xl bg-white shadow-xl">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b p-6">
+          <h2 className="text-2xl font-bold text-gray-800">Tambah Program Baru</h2>
+          <button
+            onClick={onClose}
+            className="rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-red-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
         </div>
 
-        {/* Close button */}
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-          aria-label="Close modal"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500 dark:text-gray-400">
-            <path d="M18 6 6 18"/>
-            <path d="m6 6 12 12"/>
-          </svg>
-        </button>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4 p-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {/* Title */}
+            <div className="md:col-span-2">
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Judul Program <span className="text-red-500">*</span>
+              </label>
+              <input
+                name="title"
+                value={form.title}
+                onChange={handleChange}
+                required
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-200"
+                placeholder="Masukkan judul program"
+              />
+            </div>
+
+            {/* Date & Time */}
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Tanggal <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="date"
+                name="date_program"
+                value={form.date_program}
+                onChange={handleChange}
+                required
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-200"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Waktu <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="time"
+                name="time_program"
+                value={form.time_program}
+                onChange={handleChange}
+                required
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-200"
+              />
+            </div>
+
+            {/* Duration & Status */}
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Durasi (menit) <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="number"
+                name="duration"
+                value={form.duration}
+                onChange={handleChange}
+                required
+                min="1"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-200"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Status <span className="text-red-500">*</span>
+              </label>
+              <select
+                name="status"
+                value={form.status}
+                onChange={handleChange}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-200"
+              >
+                <option value="offline">Offline</option>
+                <option value="online">Online</option>
+              </select>
+            </div>
+
+            {/* URL (conditional) */}
+            {form.status === "online" && (
+              <div className="md:col-span-2">
+                <label className="mb-1 block text-sm font-medium text-gray-700">
+                  URL Meeting <span className="text-red-500">*</span>
+                </label>
+                <input
+                  name="url_link"
+                  value={form.url_link}
+                  onChange={handleChange}
+                  required
+                  placeholder="https://example.com/meeting"
+                  className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-200"
+                />
+              </div>
+            )}
+
+            {/* Platform & Type */}
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Platform <span className="text-red-500">*</span>
+              </label>
+              <select
+                name="platform"
+                value={form.platform}
+                onChange={handleChange}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-200"
+              >
+                <option>Zoom</option>
+                <option>Google Meet</option>
+                <option>Microsoft Teams</option>
+                <option>Lainnya</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Jenis Program <span className="text-red-500">*</span>
+              </label>
+              <select
+                name="jenis_program"
+                value={form.jenis_program}
+                onChange={handleChange}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-200"
+              >
+                <option>Presentation</option>
+                <option>Workshop</option>
+                <option>Webinar</option>
+                <option>Lainnya</option>
+              </select>
+            </div>
+
+            {/* Description */}
+            <div className="md:col-span-2">
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Deskripsi
+              </label>
+              <textarea
+                name="description"
+                value={form.description}
+                onChange={handleChange}
+                rows={3}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-200"
+                placeholder="Deskripsi program..."
+              />
+            </div>
+
+            {/* File Upload */}
+            <div className="md:col-span-2">
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Gambar Thumbnail
+              </label>
+              <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-gray-300 px-6 py-4">
+                <div className="text-center">
+                  <svg
+                    className="mx-auto h-12 w-12 text-gray-400"
+                    stroke="currentColor"
+                    fill="none"
+                    viewBox="0 0 48 48"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <div className="mt-1 flex text-sm text-gray-600">
+                    <label className="relative cursor-pointer rounded-md bg-white font-medium text-red-600 hover:text-red-500 focus-within:outline-none">
+                      <span>Upload file</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="sr-only"
+                      />
+                    </label>
+                    <p className="pl-1">atau drag and drop</p>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    PNG, JPG, GIF up to 10MB
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Form Actions */}
+          <div className="mt-6 flex justify-end space-x-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-200"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50"
+            >
+              {submitting ? (
+                <span className="flex items-center">
+                  <svg
+                    className="-ml-1 mr-2 h-4 w-4 animate-spin text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Menyimpan...
+                </span>
+              ) : (
+                "Simpan Program"
+              )}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

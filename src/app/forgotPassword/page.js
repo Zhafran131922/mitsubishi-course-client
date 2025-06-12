@@ -11,7 +11,7 @@ export default function ForgotPasswordPage() {
 
     try {
       // Contoh request ke endpoint forgot password kamu
-      const response = await fetch("https://1d37-114-10-44-89.ngrok-free.app/api/v1/auth/forgot-password", {
+      const response = await fetch("http://localhost:3001/api/v1/auth/forgot-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

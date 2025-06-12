@@ -12,22 +12,44 @@ export default function ResetPasswordPage() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (password !== confirmPassword) {
-      setMessage("Passwords do not match.");
-      return;
+  if (password !== confirmPassword) {
+    setMessage("Passwords do not match.");
+    return;
+  }
+
+  setLoading(true);
+  setMessage("");
+
+  try {
+    const response = await fetch("http://localhost:3001/api/v1/auth/reset-password", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token,
+        newPassword: password,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to reset password.");
     }
 
-    setLoading(true);
-    // Simulasi success
-    setTimeout(() => {
-      setMessage("Password successfully changed. Redirecting to login...");
-      setLoading(false);
-      setTimeout(() => router.push("/login"), 3000);
-    }, 1500);
-  };
+    setMessage("Password successfully changed. Redirecting to login...");
+    setTimeout(() => router.push("/login"), 3000);
+  } catch (error) {
+    setMessage(error.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-4">

@@ -5,44 +5,63 @@ const QuizModal = ({ isOpen, onClose, onSave }) => {
   const [questions, setQuestions] = useState([]);
   const [materials, setMaterials] = useState([]);
   const [loadingMaterials, setLoadingMaterials] = useState(true);
+  const [topics, setTopics] = useState([]);
 
   useEffect(() => {
     if (!isOpen) return;
 
-    const fetchMaterials = async () => {
+    const fetchMaterialsAndTopics = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:3001/api/v1/materials", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Gagal mengambil data materi");
-        const data = await res.json();
-        setMaterials(data.data);
+
+        // Fetch materials dan topics secara paralel
+        const [materialsRes, topicsRes] = await Promise.all([
+          fetch("http://localhost:3001/api/v1/materials", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("http://localhost:3001/api/v1/topics", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        if (!materialsRes.ok) throw new Error("Gagal mengambil data materi");
+        if (!topicsRes.ok) throw new Error("Gagal mengambil data topic");
+
+        const materialsData = await materialsRes.json();
+        const topicsData = await topicsRes.json();
+
+        setMaterials(materialsData.data);
+        setTopics(topicsData.data);
       } catch (err) {
         console.error("Fetch error:", err);
-        alert("Gagal mengambil data materi");
+        alert("Gagal mengambil data");
       } finally {
         setLoadingMaterials(false);
       }
     };
 
-    fetchMaterials();
+    fetchMaterialsAndTopics();
   }, [isOpen]);
 
-const addQuestion = (type) => {
-  const newQuestion = {
-    question: "",
-    type,
-    answers:
-      type === "truefalse"
-        ? [
-            { answer: "True", isCorrect: false },
-            { answer: "False", isCorrect: false },
-          ]
-        : Array.from({ length: 4 }, () => ({ answer: "", isCorrect: false })),
+  const getTopicName = (idTopic) => {
+    const topic = topics.find((t) => t.id === idTopic);
+    return topic ? topic.name : "Unknown Topic";
   };
-  setQuestions((prev) => [...prev, newQuestion]);
-};
+
+  const addQuestion = (type) => {
+    const newQuestion = {
+      question: "",
+      type,
+      answers:
+        type === "truefalse"
+          ? [
+              { answer: "True", isCorrect: false },
+              { answer: "False", isCorrect: false },
+            ]
+          : Array.from({ length: 4 }, () => ({ answer: "", isCorrect: false })),
+    };
+    setQuestions((prev) => [...prev, newQuestion]);
+  };
 
   const handleQuestionChange = (index, value) => {
     const updated = [...questions];
@@ -148,7 +167,8 @@ const addQuestion = (type) => {
               <option value="">-- Pilih Materi --</option>
               {materials.map((m) => (
                 <option key={m.id} value={m.id}>
-                  {m.title}
+                  {m.title} - {getTopicName(m.idTopic)}{" "}
+                  {/* Menampilkan judul materi dan nama topic */}
                 </option>
               ))}
             </select>
@@ -191,9 +211,7 @@ const addQuestion = (type) => {
               <input
                 type="text"
                 value={q.question}
-                onChange={(e) =>
-                  handleQuestionChange(qIndex, e.target.value)
-                }
+                onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
                 className="w-full border p-2 rounded mb-3"
                 placeholder="Masukkan pertanyaan"
               />

@@ -8,9 +8,6 @@ export default function Header() {
 
   return (
     <header className="w-auto flex justify-end items-center px-6 py-4 bg-transparent fixed top-4 right-4 z-50">
-
-
-
       {/* Right Side: Notification and Profile */}
       <div className="flex items-center gap-6">
         {/* Notification Icon */}

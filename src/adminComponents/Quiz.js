@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
 
 const QuizSection = ({ material }) => {
   const [quiz, setQuiz] = useState([]);
@@ -10,24 +9,8 @@ const QuizSection = ({ material }) => {
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(null);
-  const [userId, setUserId] = useState(null);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        setUserId(decoded.id);
-      } catch (err) {
-        console.error("Error decoding token:", err);
-        setError("Failed to authenticate user");
-      }
-    } else {
-      setError("No authentication token found");
-    }
-  }, []);
-
-  // Reset state when material changes
+  // Reset state ketika material berubah
   useEffect(() => {
     setQuiz([]);
     setSelectedAnswers({});
@@ -38,7 +21,7 @@ const QuizSection = ({ material }) => {
   }, [material]);
 
   useEffect(() => {
-    if (!material?.id || !userId) return;
+    if (!material?.id) return;
 
     const fetchQuiz = async () => {
       try {
@@ -71,7 +54,7 @@ const QuizSection = ({ material }) => {
       }
     };
     fetchQuiz();
-  }, [material, userId]);
+  }, [material]);
 
   const handleAnswerSelect = (questionId, answerId) => {
     setSelectedAnswers(prev => ({
@@ -82,14 +65,11 @@ const QuizSection = ({ material }) => {
 
   const handleSubmit = async () => {
     try {
-      if (!userId) {
-        throw new Error("User authentication failed. Please login again.");
-      }
-
       const token = localStorage.getItem('token');
+      const userId = JSON.parse(localStorage.getItem('user')).id;
       
       const payload = {
-        userId: userId,
+        userId,
         materialId: material.id,
         answers: Object.entries(selectedAnswers).map(([questionId, answerId]) => ({
           questionId: Number(questionId),
@@ -110,8 +90,7 @@ const QuizSection = ({ material }) => {
       );
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to submit quiz");
+        throw new Error("Failed to submit quiz");
       }
 
       const result = await response.json();
@@ -119,14 +98,39 @@ const QuizSection = ({ material }) => {
       setSubmitted(true);
     } catch (error) {
       console.error("Error:", error);
-      alert(error.message || "Error submitting quiz. Please try again.");
+      alert(error.message || "Error submitting quiz");
     }
   };
 
-  const handleTryAgain = () => {
-    setSubmitted(false);
-    setSelectedAnswers({});
-    setScore(null);
+  const handleDeleteQuiz = async (quizId) => {
+    if (!window.confirm("Are you sure you want to delete this quiz?")) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        `http://localhost:3001/api/v1/quiz/${quizId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete quiz");
+      }
+
+      // Refresh the quiz list after deletion
+      const updatedQuiz = quiz.filter(q => q.id !== quizId);
+      setQuiz(updatedQuiz);
+      alert("Quiz deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting quiz:", error);
+      alert(error.message || "Error deleting quiz");
+    }
   };
 
   if (loading) return <div>Loading quiz for {material.title}...</div>;
@@ -137,35 +141,13 @@ const QuizSection = ({ material }) => {
     <div className="w-full bg-white p-6 rounded-lg shadow-md">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Quiz: {material.title}</h2>
+        {/* You can add a button here to delete the entire quiz set if needed */}
       </div>
       
       {submitted ? (
-        <div className="text-center space-y-4">
+        <div className="text-center">
           <h3 className="text-xl font-semibold">Quiz Completed!</h3>
-          <p className="text-lg">
-            Your score: {score} from {quiz.length} questions ({(score/quiz.length*1).toFixed(0)}%)
-          </p>
-          
-          {/* Pass/Fail Message */}
-          {score/quiz.length*100 >= 65 ? (
-            <div className="bg-green-100 text-green-800 p-3 rounded-lg inline-block">
-              Congratulations! You passed the quiz.
-            </div>
-          ) : (
-            <div className="bg-red-100 text-red-800 p-3 rounded-lg inline-block">
-              Sorry, you didn't pass. Keep trying!
-            </div>
-          )}
-          
-          {/* Try Again Button */}
-          <div className="pt-4">
-            <button
-              onClick={handleTryAgain}
-              className="bg-[#A70000] text-white px-4 py-2 rounded hover:bg-[#8a0000] transition-colors"
-            >
-              Try Again
-            </button>
-          </div>
+          <p className="text-lg mt-2">Your score: {score}/100</p>
         </div>
       ) : (
         <>
@@ -173,6 +155,12 @@ const QuizSection = ({ material }) => {
             <div key={question.id} className="mb-6 border-b pb-4">
               <div className="flex justify-between items-start">
                 <h3 className="text-lg font-medium mb-2">{question.question}</h3>
+                <button
+                  onClick={() => handleDeleteQuiz(question.id)}
+                  className="text-red-600 hover:text-red-800 text-sm"
+                >
+                  Delete
+                </button>
               </div>
               <div className="space-y-2">
                 {question.answers.map((answer) => (
@@ -196,16 +184,6 @@ const QuizSection = ({ material }) => {
               </div>
             </div>
           ))}
-
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={handleSubmit}
-              disabled={Object.keys(selectedAnswers).length !== quiz.length}
-              className="bg-[#A70000] text-white px-4 py-2 rounded hover:bg-[#8a0000] disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-            >
-              Submit Quiz
-            </button>
-          </div>
         </>
       )}
     </div>

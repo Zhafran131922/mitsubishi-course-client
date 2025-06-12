@@ -68,12 +68,12 @@ const CourseContentSection = ({ material }) => {
 
       {/* Konten */}
       <div className="bg-white w-full min-h-[300px] p-4 sm:p-5 mt-2 rounded-lg shadow-lg overflow-auto">
-       {activePage === "overview" && <Overview material={currentMaterial[0]} />}
+        {activePage === "overview" && <Overview />}
         {activePage === "course" && <Module material={currentMaterial} />}
         {activePage === "quiz" && currentMaterial[0] && (
           <QuizSection material={currentMaterial[0]} />
         )}
-        {activePage === "review" && <Review />}
+       {activePage === "review" && <Review material={currentMaterial[0]} />}
       </div>
     </div>
   );
