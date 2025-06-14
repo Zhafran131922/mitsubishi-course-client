@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { getMaterialsAndTopics } from "../../lib/api";
+import { createQuiz } from "../../lib/api";
 
 const QuizModal = ({ isOpen, onClose, onSave }) => {
   const [idMaterial, setIdMaterial] = useState("");
@@ -12,26 +14,9 @@ const QuizModal = ({ isOpen, onClose, onSave }) => {
 
     const fetchMaterialsAndTopics = async () => {
       try {
-        const token = localStorage.getItem("token");
-
-        // Fetch materials dan topics secara paralel
-        const [materialsRes, topicsRes] = await Promise.all([
-          fetch("http://localhost:3001/api/v1/materials", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch("http://localhost:3001/api/v1/topics", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-        ]);
-
-        if (!materialsRes.ok) throw new Error("Gagal mengambil data materi");
-        if (!topicsRes.ok) throw new Error("Gagal mengambil data topic");
-
-        const materialsData = await materialsRes.json();
-        const topicsData = await topicsRes.json();
-
-        setMaterials(materialsData.data);
-        setTopics(topicsData.data);
+        const { materials, topics } = await getMaterialsAndTopics();
+        setMaterials(materials);
+        setTopics(topics);
       } catch (err) {
         console.error("Fetch error:", err);
         alert("Gagal mengambil data");
@@ -102,48 +87,37 @@ const QuizModal = ({ isOpen, onClose, onSave }) => {
       return;
     }
 
-    for (const q of questions) {
-      if (!q.question || q.answers.some((a) => !a.answer)) {
-        alert("Lengkapi semua pertanyaan dan jawaban terlebih dahulu");
-        return;
-      }
-      if (!q.answers.some((a) => a.isCorrect)) {
-        alert("Setiap soal harus memiliki jawaban benar");
-        return;
-      }
-
-      const payload = {
-        question: q.question,
-        idMaterial: Number(idMaterial),
-        answers: q.answers,
-      };
-
-      try {
-        const res = await fetch("http://localhost:3001/api/v1/quiz", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(payload),
-        });
-
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.message || "Gagal membuat quiz");
+    try {
+      for (const q of questions) {
+        if (!q.question || q.answers.some((a) => !a.answer)) {
+          alert("Lengkapi semua pertanyaan dan jawaban terlebih dahulu");
+          return;
         }
-      } catch (err) {
-        console.error("Submit error:", err);
-        alert(err.message || "Terjadi kesalahan saat menyimpan quiz");
-        return;
-      }
-    }
 
-    alert("Semua quiz berhasil dibuat!");
-    setIdMaterial("");
-    setQuestions([]);
-    onClose();
-    if (typeof onSave === "function") onSave();
+        if (!q.answers.some((a) => a.isCorrect)) {
+          alert("Setiap soal harus memiliki jawaban benar");
+          return;
+        }
+
+        await createQuiz(
+          {
+            question: q.question,
+            idMaterial,
+            answers: q.answers,
+          },
+          token
+        );
+      }
+
+      alert("✅ Semua quiz berhasil dibuat!");
+      setIdMaterial("");
+      setQuestions([]);
+      onClose();
+      if (typeof onSave === "function") onSave();
+    } catch (err) {
+      console.error("Submit error:", err);
+      alert(err.message || "Terjadi kesalahan saat menyimpan quiz");
+    }
   };
 
   if (!isOpen) return null;

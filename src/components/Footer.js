@@ -22,15 +22,20 @@ const Footer = () => {
 
         {/* Description */}
         <p className="text-gray-400 max-w-2xl mx-auto mb-6">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat.
+          Mitsubishi Training Center is committed to providing high-quality
+          automotive education and skill development. We aim to empower
+          individuals with the knowledge and experience needed to thrive in the
+          automotive industry through innovative and hands-on training programs.
         </p>
 
         {/* Social Icons */}
         <div className="flex justify-center space-x-4 mb-6">
-          <div className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-500 hover:bg-gray-700 cursor-pointer">
+          <a
+            href="https://www.instagram.com/mitsubishimotorsid"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-500 hover:bg-gray-700 cursor-pointer"
+          >
             <Image
               src="/assets/instagram.png"
               alt="Instagram"
@@ -38,8 +43,13 @@ const Footer = () => {
               height={20}
               className="h-5 w-auto"
             />
-          </div>
-          <div className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-500 hover:bg-gray-700 cursor-pointer">
+          </a>
+          <a
+            href="https://x.com/AreaMitsubishi"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-500 hover:bg-gray-700 cursor-pointer"
+          >
             <Image
               src="/assets/twitter.png"
               alt="Twitter"
@@ -47,8 +57,13 @@ const Footer = () => {
               height={20}
               className="h-5 w-auto"
             />
-          </div>
-          <div className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-500 hover:bg-gray-700 cursor-pointer">
+          </a>
+          <a
+            href="https://www.youtube.com/@mitsubishimotorsid"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-500 hover:bg-gray-700 cursor-pointer"
+          >
             <Image
               src="/assets/youtube.png"
               alt="YouTube"
@@ -56,30 +71,33 @@ const Footer = () => {
               height={20}
               className="h-5 w-auto"
             />
-          </div>
+          </a>
         </div>
 
         {/* Contact Information */}
         <div className="flex flex-col items-center text-gray-400 space-y-2 mb-6">
           <div className="flex items-center space-x-2">
             <MapPin className="w-5 h-5 text-gray-500" />
-            <span>Jl. Mdowdw 9822</span>
+            <span>
+              Kawasan MM2100, Jalan Nias Blok NR1, Gandasari, Cikarang Barat,
+              Bekasi, West Java 17530
+            </span>
           </div>
           <div className="flex items-center space-x-2">
             <Phone className="w-5 h-5 text-gray-500" />
-            <span>026 565 6565 555</span>
+            <span>0857-1863-1296</span>
           </div>
           <div className="flex items-center space-x-2">
             <Mail className="w-5 h-5 text-gray-500" />
-            <span>userfsds@gmail.com</span>
+            <span>mitsubishimessages@gmail.com</span>
           </div>
         </div>
 
         {/* Copyright */}
         <div className="border-t border-gray-700 pt-4 text-sm text-gray-500">
           <p>
-            MITSUBISHI TRAINING CENTER &copy; All Rights Reserved Made With{" "}
-            <Heart className="inline w-4 h-4 text-red-500" /> By Wahyudi
+            MITSUBISHI TRAINING CENTER &copy; All Rights Reserved — Made with{" "}
+            <Heart className="inline w-4 h-4 text-red-500" /> by Akmal
           </p>
         </div>
       </div>

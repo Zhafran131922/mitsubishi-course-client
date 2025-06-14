@@ -24,7 +24,7 @@ const Review = ({ material }) => {
     const fetchScores = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:3001/api/v1/quiz/score", {
+        const res = await fetch("https://duanol.mitsubishi-training.my.id/api/v1/quiz/score", {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -78,7 +78,7 @@ const Review = ({ material }) => {
     <div className="bg-white rounded-xl shadow-sm p-6 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-800">
-          Passed Scores {materialTitle && <span className="text-red-600">for "{materialTitle}"</span>}
+        Passed Scores {materialTitle && <span className="text-red-600">for &quot;{materialTitle}&quot;</span>}
         </h2>
         {passedScores.length > 0 && (
           <span className="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">

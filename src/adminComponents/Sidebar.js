@@ -52,10 +52,10 @@ const Sidebar = ({ onExpand }) => {
   if (!user) return null;
 
   const menuItems = [
-    { href: "/adminAgenda/admin", icon: <FaClipboardList />, label: "Agenda" },
-    { href: "/adminProgram/admin", icon: <FaFilm />, label: "Program" },
-    { href: "/adminMaterial/admin", icon: <FaHeadset />, label: "Material" },
-    { href: "/managementUsers/admin", icon: <FaInfoCircle />, label: "Task" },
+    { href: "/admin-agenda/admin", icon: <FaClipboardList />, label: "Agenda" },
+    { href: "/admin-program/admin", icon: <FaFilm />, label: "Program" },
+    { href: "/admin-material/admin", icon: <FaHeadset />, label: "Material" },
+    { href: "/management-users/admin", icon: <FaInfoCircle />, label: "Task" },
   ];
 
   return (

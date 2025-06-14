@@ -3,13 +3,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 
-const daysOfWeek = ["S", "M", "T", "W", "T", "F", "S"];
+const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 const Calendar = () => {
   const router = useRouter();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [showEventSidebar, setShowEventSidebar] = useState(true);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,6 +19,10 @@ const Calendar = () => {
   const calendarRef = useRef(null);
   const [storedUser, setStoredUser] = useState(null);
 
+  // Get current date values
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  const today = new Date();
 
   // Get days in month
   const getDaysInMonth = (year, month) => {
@@ -29,21 +33,26 @@ const Calendar = () => {
     return new Date(year, month, 1).getDay();
   };
 
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
-  const daysInMonth = getDaysInMonth(year, month);
-  const firstDayOfMonth = getFirstDayOfMonth(year, month);
+  // Generate calendar days array
+  const generateCalendarDays = () => {
+    const daysInMonth = getDaysInMonth(year, month);
+    const firstDayOfMonth = getFirstDayOfMonth(year, month);
+    const days = [];
 
-  const days = [];
+    // Add empty slots for days before the first day of month
+    for (let i = 0; i < firstDayOfMonth; i++) {
+      days.push(null);
+    }
 
-  for (let i = 0; i < firstDayOfMonth; i++) {
-    days.push(null);
-  }
+    // Add days of month
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push(i);
+    }
 
-  // Add days of month
-  for (let i = 1; i <= daysInMonth; i++) {
-    days.push(i);
-  }
+    return days;
+  };
+
+  const days = generateCalendarDays();
 
   // Fetch events from API
   useEffect(() => {
@@ -62,7 +71,7 @@ const Calendar = () => {
 
         // Fetch deadline topics
         const deadlineResponse = await fetch(
-          "http://localhost:3001/api/v1/topics/deadline", 
+          "https://duanol.mitsubishi-training.my.id/api/v1/topics/deadline", 
           { headers }
         );
         
@@ -87,7 +96,7 @@ const Calendar = () => {
 
         // Fetch program dates
         const programResponse = await fetch(
-          "http://localhost:3001/api/v1/program/date", 
+          "https://duanol.mitsubishi-training.my.id/api/v1/program/date", 
           { headers }
         );
         
@@ -124,10 +133,6 @@ const Calendar = () => {
 
   const nextMonth = () => {
     setCurrentDate(new Date(year, month + 1, 1));
-  };
-
-  const toggleEventSidebar = () => {
-    setShowEventSidebar(!showEventSidebar);
   };
 
   // Get events for the current month
@@ -192,7 +197,6 @@ const Calendar = () => {
   };
 
   useEffect(() => {
-    // Hanya dijalankan di client
     const user = localStorage.getItem("user");
     if (user) {
       setStoredUser(JSON.parse(user));
@@ -202,231 +206,267 @@ const Calendar = () => {
   // Navigate to event details
   const navigateToEvent = (event) => {
     if (event.type === "deadline") {
-      router.push(`/courses/${event.id}/${storedUser.username}`);
+      router.push(`/courses/topicId?id=${event.id}`);
     } else {
       router.push(`/programDetail?id=${event.id}`);
     }
   };
 
   const monthEvents = getEventsForMonth();
-  const today = new Date();
 
   return (
-    <div className="flex flex-col lg:flex-row h-auto lg:h-[500px] w-full bg-white shadow-md rounded-md">
-      {/* Calendar Side */}
-      <div className="flex-1 flex flex-col p-4 lg:p-6">
-        <div className="w-full bg-white rounded-lg">
-          {/* Header */}
-          <div className="flex justify-between items-center mb-4 lg:mb-6 text-gray-700">
-            <div>
-              <h3 className="text-xl lg:text-2xl font-semibold">
-                {currentDate.toLocaleString("default", { month: "long" })} {year}
-              </h3>
-              <div className="flex items-center mt-1 text-xs text-gray-500">
-                <div className="flex items-center mr-3">
-                  <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
-                  <span>Deadline Materi</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-3 h-3 rounded-full bg-blue-500 mr-1"></div>
-                  <span>Tanggal Program</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={prevMonth}
-                className="p-1 lg:p-2 rounded hover:bg-gray-100"
-              >
-                <ChevronLeft size={20} />
-              </button>
-              <button
-                onClick={nextMonth}
-                className="p-1 lg:p-2 rounded hover:bg-gray-100"
-              >
-                <ChevronRight size={20} />
-              </button>
-              <button
-                onClick={toggleEventSidebar}
-                className="lg:hidden p-1 rounded hover:bg-gray-100"
-              >
-                {showEventSidebar ? "Hide Events" : "Show Events"}
-              </button>
-            </div>
+    <div className="flex flex-col lg:flex-row gap-6 w-full">
+      {/* Calendar Section - Modern Design */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="flex-1 bg-gradient-to-br from-white to-gray-50 border border-gray-100 shadow-lg rounded-2xl p-6 backdrop-blur-sm"
+      >
+        {/* Header with Glass Morphism */}
+        <div className="flex justify-between items-center mb-6 p-4 bg-white/80 rounded-xl shadow-sm">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-red-500 to-red-800 bg-clip-text text-transparent">
+            {currentDate.toLocaleString("default", { month: "long" })} {year}
+          </h2>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={prevMonth}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-all hover:shadow-md"
+            >
+              <ChevronLeft size={20} className="text-gray-600" />
+            </button>
+            <button
+              onClick={nextMonth}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-all hover:shadow-md"
+            >
+              <ChevronRight size={20} className="text-gray-600" />
+            </button>
           </div>
+        </div>
 
-          {/* Days of week */}
-          <div className="grid grid-cols-7 text-center text-sm lg:text-base text-gray-600 font-medium mb-2 lg:mb-4">
-            {daysOfWeek.map((day, index) => (
-              <div key={index}>{day}</div>
-            ))}
+        {/* Legend with Pills */}
+        <div className="flex items-center gap-3 mb-6 px-2">
+          <span className="text-xs font-medium text-gray-500">LEGENDS:</span>
+          <div className="flex items-center gap-2 bg-blue-50 px-3 py-1 rounded-full">
+            <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+            <span className="text-xs text-blue-700">Program</span>
           </div>
+          <div className="flex items-center gap-2 bg-red-50 px-3 py-1 rounded-full">
+            <div className="w-2 h-2 rounded-full bg-red-500"></div>
+            <span className="text-xs text-red-700">Deadline</span>
+          </div>
+        </div>
 
-          {/* Calendar Grid */}
-          <div 
-            ref={calendarRef}
-            className="grid grid-cols-7 gap-1 lg:gap-2 text-center relative"
-            onMouseLeave={handleMouseLeave}
-          >
-            {days.map((day, index) => {
-              const isToday = 
-                day === today.getDate() && 
-                month === today.getMonth() && 
-                year === today.getFullYear();
-              
-              const dayEvents = getEventsForDay(day);
-              const hasDeadline = dayEvents.some(e => e.type === "deadline");
-              const hasProgram = dayEvents.some(e => e.type === "program");
-              
-              return (
-                <div
-                  key={index}
-                  className={`relative h-10 w-10 flex flex-col items-center justify-center rounded-full text-sm lg:text-base ${
-                    isToday
-                      ? "bg-blue-600 text-white"
-                      : day
-                      ? "hover:bg-gray-100 text-gray-700"
-                      : ""
-                  }`}
-                  onMouseMove={(e) => handleDayHover(day, e)}
-                >
-                  {day}
-                  {hasEvents(day) && (
-                    <div className="flex justify-center mt-1">
-                      {hasDeadline && (
-                        <div 
-                          className={`w-2 h-2 rounded-full mx-0.5 ${
-                            isToday ? "bg-white" : "bg-red-500"
-                          }`}
-                        />
-                      )}
-                      {hasProgram && (
-                        <div 
-                          className={`w-2 h-2 rounded-full mx-0.5 ${
-                            isToday ? "bg-white" : "bg-blue-500"
-                          }`}
-                        />
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+        {/* Days of week - Modern */}
+        <div className="grid grid-cols-7 text-center text-sm font-medium text-gray-500 mb-4">
+          {daysOfWeek.map((day, index) => (
+            <div key={index} className="py-2">
+              {day}
+            </div>
+          ))}
+        </div>
+
+        {/* Calendar Grid - Animated */}
+        <div 
+          ref={calendarRef}
+          className="grid grid-cols-7 gap-2 text-center relative"
+          onMouseLeave={handleMouseLeave}
+        >
+          {days.map((day, index) => {
+            const isToday = 
+              day === today.getDate() && 
+              month === today.getMonth() && 
+              year === today.getFullYear();
             
-            {/* Tooltip for hovered day */}
+            const dayEvents = getEventsForDay(day);
+            const hasDeadline = dayEvents.some(e => e.type === "deadline");
+            const hasProgram = dayEvents.some(e => e.type === "program");
+            
+            return (
+              <motion.div
+                key={index}
+                whileHover={{ scale: 1.05 }}
+                className={`relative h-14 flex flex-col items-center justify-center rounded-xl text-sm transition-all ${
+                  isToday
+                    ? "bg-gradient-to-r from-red-500 to-red-800 text-white shadow-lg"
+                    : day
+                    ? "hover:bg-gray-50 text-gray-700 border border-gray-100"
+                    : "text-gray-300"
+                }`}
+                onMouseMove={(e) => handleDayHover(day, e)}
+              >
+                {day}
+                {hasEvents(day) && (
+                  <div className="flex justify-center mt-1 space-x-1">
+                    {hasDeadline && (
+                      <motion.div 
+                        animate={{ scale: [0.8, 1.1, 1] }}
+                        className="w-2 h-2 rounded-full bg-red-500"
+                      ></motion.div>
+                    )}
+                    {hasProgram && (
+                      <motion.div 
+                        animate={{ scale: [0.8, 1.1, 1] }}
+                        className="w-2 h-2 rounded-full bg-blue-500"
+                      ></motion.div>
+                    )}
+                  </div>
+                )}
+              </motion.div>
+            );
+          })}
+          
+          {/* Animated Tooltip */}
+          <AnimatePresence>
             {hoveredDay && hoveredEvents.length > 0 && (
-              <div 
-                className="absolute bg-white border border-gray-200 shadow-lg rounded-lg p-3 z-10 min-w-[200px]"
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="absolute bg-white border border-gray-200 shadow-xl rounded-xl p-4 z-10 min-w-[240px] backdrop-blur-sm"
                 style={{
                   left: `${tooltipPosition.x + 10}px`,
                   top: `${tooltipPosition.y + 10}px`,
                 }}
               >
-                <div className="text-sm font-medium text-gray-800 mb-2">
+                <div className="text-sm font-bold text-gray-800 mb-2">
                   {hoveredDay} {currentDate.toLocaleString("default", { month: "short" })}
                 </div>
                 <div className="space-y-2">
                   {hoveredEvents.map(event => (
-                    <div 
+                    <motion.div 
                       key={`${event.id}-${event.type}`}
-                      className={`flex items-start p-2 rounded ${
+                      whileHover={{ scale: 1.02 }}
+                      className={`flex items-start p-3 rounded-lg cursor-pointer ${
                         event.type === "deadline" 
-                          ? "bg-red-50 border-l-4 border-red-500" 
-                          : "bg-blue-50 border-l-4 border-blue-500"
-                      }`}
+                          ? "bg-gradient-to-r from-red-50 to-red-100 border-l-4 border-red-400" 
+                          : "bg-gradient-to-r from-blue-50 to-blue-100 border-l-4 border-blue-400"
+                      } transition-all`}
+                      onClick={() => navigateToEvent(event)}
                     >
                       <div className="flex-1">
-                        <div className="font-medium text-gray-800">{event.title}</div>
+                        <div className="font-semibold text-gray-800">{event.title}</div>
                         <div className="text-xs text-gray-500 mt-1">
                           {event.type === "deadline" ? "Deadline Materi" : "Tanggal Program"}
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             )}
-          </div>
-
-          {/* Removed action buttons */}
+          </AnimatePresence>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Event List Side */}
-      {showEventSidebar && (
-        <div className="w-full lg:w-[300px] bg-[#0c0c1d] text-white p-4 lg:p-6 flex flex-col justify-between rounded-b-lg lg:rounded-r-lg lg:rounded-bl-none">
-          <div>
-            <div className="flex justify-between items-center mb-4">
-              <h4 className="text-base lg:text-lg font-semibold">EVENTS</h4>
-              <button
-                onClick={toggleEventSidebar}
-                className="lg:hidden text-white/70 hover:text-white"
+      {/* Upcoming Events Section - Card Style */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+        className="w-full lg:w-96 bg-white border border-gray-100 shadow-lg rounded-2xl overflow-hidden"
+      >
+        <div className="bg-gradient-to-r from-red-500 to-red-800 text-white p-5">
+
+          <h3 className="text-xl font-bold">Upcoming Events</h3>
+          <p className="text-sm text-white/90 mt-1">
+            {currentDate.toLocaleString("default", { month: "long" })} {year}
+          </p>
+        </div>
+        
+        <div className="p-5">
+          {/* Loading state */}
+          {loading && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-8"
+            >
+              <div className="animate-spin rounded-full h-8 w-8 border-4 border-indigo-100 border-t-indigo-500 mx-auto"></div>
+              <p className="mt-3 text-gray-500">Loading events...</p>
+            </motion.div>
+          )}
+          
+          {/* Error state */}
+          {error && (
+            <motion.div 
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4"
+            >
+              <p className="text-red-600 text-sm font-medium">Error: {error}</p>
+              <p className="text-red-500 text-xs mt-1">
+                Please check your connection and try again
+              </p>
+            </motion.div>
+          )}
+          
+          {/* Event Items - Modern Cards */}
+          <div className="space-y-3 max-h-[450px] overflow-y-auto pr-2">
+            {monthEvents.length === 0 && !loading && !error && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-8"
               >
-                ✕
-              </button>
-            </div>
-            
-            {/* Loading state */}
-            {loading && (
-              <div className="text-center py-4">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mx-auto"></div>
-                <p className="mt-2">Loading events...</p>
-              </div>
-            )}
-            
-            {/* Error state */}
-            {error && (
-              <div className="bg-red-900/30 border border-red-700 rounded p-3 mb-4">
-                <p className="text-red-300 text-sm">Error: {error}</p>
-                <p className="text-red-200 text-xs mt-1">
-                  Please check your token and try again
-                </p>
-              </div>
-            )}
-            
-            {/* Event Items */}
-            <div className="space-y-3 lg:space-y-4 max-h-[350px] overflow-y-auto">
-              {monthEvents.length === 0 && !loading && !error && (
-                <p className="text-white/70 text-center py-4">
-                  No events scheduled for this month
-                </p>
-              )}
-              
-              {monthEvents.map(event => (
-                <div 
-                  key={`${event.id}-${event.type}`} 
-                  className="border-b border-white/20 pb-3 lg:pb-3 text-sm lg:text-base cursor-pointer hover:bg-white/10 rounded-lg p-3 transition-all"
-                  onClick={() => navigateToEvent(event)}
-                >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h5 className="font-medium">{event.title}</h5>
-                      <div className="flex items-center mt-1">
-                        <span className={`inline-block w-2 h-2 rounded-full mr-2 ${
-                          event.type === "deadline" ? "bg-red-500" : "bg-blue-500"
-                        }`}></span>
-                        <span className="text-xs text-white/70">
-                          {event.type === "deadline" ? "Deadline" : "Program"} • 
-                          {formatDateDisplay(event.date)}
-                        </span>
-                      </div>
-                    </div>
-                    <span className={`text-xs px-2 py-1 rounded ${
-                      event.type === "deadline" 
-                        ? "bg-red-900/30 text-red-300" 
-                        : "bg-blue-900/30 text-blue-300"
-                    }`}>
-                      {event.type}
-                    </span>
-                  </div>
+                <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-3 flex items-center justify-center">
+                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                  </svg>
                 </div>
-              ))}
-            </div>
+                <p className="text-gray-500">No events scheduled this month</p>
+              </motion.div>
+            )}
+            
+            {monthEvents.map((event, index) => (
+              <motion.div 
+                key={`${event.id}-${event.type}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                whileHover={{ translateX: 5 }}
+                className="group bg-white border border-gray-100 rounded-xl p-4 cursor-pointer hover:shadow-md transition-all"
+                onClick={() => navigateToEvent(event)}
+              >
+                <div className="flex items-start gap-3">
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                    event.type === "deadline" 
+                      ? "bg-red-100 text-red-600" 
+                      : "bg-blue-100 text-blue-600"
+                  }`}>
+                    {event.type === "deadline" ? (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                      </svg>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <h5 className="font-semibold text-gray-800 group-hover:text-indigo-600 transition-colors">
+                      {event.title}
+                    </h5>
+                    <div className="flex items-center mt-1">
+                      <span className="text-xs text-gray-500">
+                        {formatDateDisplay(event.date)} • {event.type === "deadline" ? "Deadline" : "Program"}
+                      </span>
+                    </div>
+                  </div>
+                  <span className={`text-xs px-2.5 py-1 rounded-full ${
+                    event.type === "deadline" 
+                      ? "bg-red-50 text-red-600" 
+                      : "bg-blue-50 text-blue-600"
+                  }`}>
+                    {event.type}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
           </div>
-
-          {/* Removed bottom buttons */}
         </div>
-      )}
+      </motion.div>
     </div>
   );
 };

@@ -9,7 +9,6 @@ const tabs = [
   { name: "Overview", key: "overview" },
   { name: "Modul", key: "course" },
   { name: "Take a Quiz", key: "quiz" },
-  { name: "Review", key: "review" },
 ];
 
 const CourseContentSection = ({ material }) => {
@@ -73,7 +72,6 @@ const CourseContentSection = ({ material }) => {
         {activePage === "quiz" && currentMaterial[0] && (
           <QuizSection material={currentMaterial[0]} />
         )}
-        {activePage === "review" && <Review />}
       </div>
     </div>
   );

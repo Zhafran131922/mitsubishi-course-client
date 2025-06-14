@@ -18,7 +18,7 @@ const Profile = () => {
         onClick={toggleDropdown}
       >
         <Image
-          src="https://randomuser.me/api/portraits/women/44.jpg"
+          src="http://randomuser.me/api/portraits/women/44.jpg"
           alt="User"
           width={40}
           height={40}

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createProgram } from "../../lib/api";
 
 const ProgramModal = ({ isOpen, onClose, onSuccess, token: tokenProp }) => {
   const [form, setForm] = useState({
@@ -31,27 +32,7 @@ const ProgramModal = ({ isOpen, onClose, onSuccess, token: tokenProp }) => {
     setSubmitting(true);
 
     try {
-      const token = tokenProp || localStorage.getItem("token") || "";
-
-      const formData = new FormData();
-      Object.entries(form).forEach(([key, val]) => {
-        if (key === "url_link" && form.status !== "online") return;
-        if (key === "content") {
-          if (val) formData.append("content", val);
-        } else {
-          formData.append(key, val);
-        }
-      });
-
-      const response = await fetch("http://localhost:3001/api/v1/program", {
-        method: "POST",
-        headers: {
-          Authorization: token ? `Bearer ${token}` : "",
-        },
-        body: formData,
-      });
-
-      if (!response.ok) throw new Error("Gagal menambah program");
+      await createProgram(form, tokenProp);
 
       if (typeof onSuccess === "function") onSuccess();
       onClose();
@@ -70,7 +51,9 @@ const ProgramModal = ({ isOpen, onClose, onSuccess, token: tokenProp }) => {
       <div className="w-full max-w-2xl rounded-xl bg-white shadow-xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b p-6">
-          <h2 className="text-2xl font-bold text-gray-800">Tambah Program Baru</h2>
+          <h2 className="text-2xl font-bold text-gray-800">
+            Tambah Program Baru
+          </h2>
           <button
             onClick={onClose}
             className="rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-red-500"

@@ -1,35 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import { requestPasswordReset } from "../../../lib/api";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      // Contoh request ke endpoint forgot password kamu
-      const response = await fetch("http://localhost:3001/api/v1/auth/forgot-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Something went wrong.");
-      }
-
-      setMessage("Password reset link has been sent to your email.");
-    } catch (error) {
-      setMessage(error.message);
-    }
-  };
+  try {
+    await requestPasswordReset(email);
+    setMessage("Link untuk reset password telah dikirim ke email Anda.");
+  } catch (error) {
+    setMessage(error.message);
+  }
+};
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-4">

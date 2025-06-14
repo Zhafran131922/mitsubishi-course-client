@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { getQuizByMaterialId } from "../../lib/api";
 
 const QuizSection = ({ material }) => {
   const [quiz, setQuiz] = useState([]);
@@ -20,41 +21,23 @@ const QuizSection = ({ material }) => {
     setError("");
   }, [material]);
 
-  useEffect(() => {
-    if (!material?.id) return;
+useEffect(() => {
+  if (!material?.id) return;
 
-    const fetchQuiz = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(
-          `http://localhost:3001/api/v1/quiz/materials/${material.id}`,
-          {
-            headers: {
-              "Authorization": `Bearer ${token}`
-            }
-          }
-        );
+  const fetchQuiz = async () => {
+    try {
+      const data = await getQuizByMaterialId(material.id);
+      setQuiz(data);
+    } catch (err) {
+      console.error("Error fetching quiz:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        if (!response.ok) {
-          throw new Error(`Failed to fetch quiz for material ${material.id}`);
-        }
-
-        const data = await response.json();
-        
-        if (!Array.isArray(data)) {
-          throw new Error("Invalid quiz data format");
-        }
-
-        setQuiz(data);
-      } catch (err) {
-        console.error("Error fetching quiz:", err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchQuiz();
-  }, [material]);
+  fetchQuiz();
+}, [material]);
 
   const handleAnswerSelect = (questionId, answerId) => {
     setSelectedAnswers(prev => ({
@@ -78,7 +61,7 @@ const QuizSection = ({ material }) => {
       };
 
       const response = await fetch(
-        "http://localhost:3001/api/v1/quiz/submit",
+        "https://duanol.mitsubishi-training.my.id/api/v1/quiz/submit",
         {
           method: "POST",
           headers: {
@@ -110,7 +93,7 @@ const QuizSection = ({ material }) => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `http://localhost:3001/api/v1/quiz/${quizId}`,
+        `https://duanol.mitsubishi-training.my.id/api/v1/quiz/${quizId}`,
         {
           method: "DELETE",
           headers: {

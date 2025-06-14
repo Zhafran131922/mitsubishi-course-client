@@ -1,14 +1,13 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation"; // Changed from next/router to next/navigation
 import Image from "next/image";
 import { CheckCircle, Clock, Signal } from "lucide-react";
 import { motion } from "framer-motion";
 import { fetchMaterials } from "../../lib/api";
 
-/**
- * Single training card component
- */
-const TrainCard = ({ title, author, level, duration, image, route }) => (
+const TrainCard = ({ title, author, level, duration, image, onNavigate }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
@@ -37,26 +36,23 @@ const TrainCard = ({ title, author, level, duration, image, route }) => (
           <Signal className="w-4 h-4" />
           <span>{level}</span>
         </div>
-        <div className="flex items-center  gap-1">
+        <div className="flex items-center gap-1">
           <Clock className="w-4 h-4" />
           <span>{duration}</span>
         </div>
       </div>
-      <Link href={route} className="mt-4 block">
-        <button className="w-full bg-[#A70000] text-white py-2 rounded-md font-medium hover:bg-red-700 transition">
-          Buka Materi
-        </button>
-      </Link>
+      <button 
+        onClick={onNavigate}
+        className="w-full bg-[#A70000] text-white py-2 rounded-md font-medium hover:bg-red-700 transition mt-4"
+      >
+        Buka Materi
+      </button>
     </div>
   </motion.div>
 );
 
-/**
- * Container that fetches materials & renders grid of cards
- * Fixes "localStorage is not defined" by only touching localStorage
- * inside useEffect (client‑side) and by guarding for window.
- */
 const CardsContainer = () => {
+  const router = useRouter(); // Initialize router
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -64,7 +60,6 @@ const CardsContainer = () => {
   const [user, setUser] = useState({ username: "guest" });
 
   useEffect(() => {
-    /** Load user from localStorage safely (only in browser) */
     const storedUser = (() => {
       if (typeof window === "undefined") return { username: "guest" };
       try {
@@ -75,17 +70,16 @@ const CardsContainer = () => {
     })();
     setUser(storedUser);
 
-    /** Fetch course data */
     const loadMaterials = async () => {
       try {
         const materials = await fetchMaterials();
         const transformedCourses = materials.map((course) => ({
+          id: course.id_topic, // Include the id in the course object
           title: course.title,
           author: `User ${course.created_by}`,
           level: course.level,
           duration: `${course.duration} Menit`,
           image: getImageUrl(course.picture),
-          route: `/courses/${course.id_topic}/${storedUser.username}`,
         }));
         setCourses(transformedCourses);
       } catch (err) {
@@ -98,12 +92,16 @@ const CardsContainer = () => {
     loadMaterials();
   }, []);
 
-  /** Helper to turn a picture path into a full URL */
   const getImageUrl = (picturePath) => {
     if (!picturePath) return "/default-image.jpg";
     if (picturePath.startsWith("http")) return picturePath;
-    const filename = picturePath.split("\\").pop() || picturePath.split("/").pop();
-    return `http://localhost:3001/uploads/${filename}`;
+    const filename = picturePath.split("/").pop() || picturePath.split("/").pop();
+    return `https://duanol.mitsubishi-training.my.id/uploads/${filename}`;
+  };
+
+  // Navigation handler
+  const handleNavigateToCourse = (courseId) => {
+    router.push(`/courses/topicId?id=${courseId}`);
   };
 
   if (loading) {
@@ -125,7 +123,10 @@ const CardsContainer = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 py-4">
         {(showAll ? courses : courses.slice(0, 5)).map((course, index) => (
           <div key={index} className="w-full">
-            <TrainCard {...course} />
+            <TrainCard 
+              {...course}
+              onNavigate={() => handleNavigateToCourse(course.id)} // Pass navigation handler
+            />
           </div>
         ))}
       </div>

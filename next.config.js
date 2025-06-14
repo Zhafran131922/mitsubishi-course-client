@@ -1,11 +1,16 @@
-/** @type {import('next').NextConfig} */
+// next.config.js
+
 const nextConfig = {
+  output: "export", // ⬅️ Build statis
+
   images: {
-    domains: ["localhost"],
+    unoptimized: true, // ⬅️ WAJIB untuk static export
+    domains: ["localhost", "duanol.mitsubishi-training.my.id"],
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "randomuser.me",
+        hostname: "duanol.mitsubishi-training.my.id",
+        pathname: "/uploads/**",
       },
     ],
   },

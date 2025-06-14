@@ -6,6 +6,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { login } from "../../../lib/api";
 
+// Slideshow images
+const imageList = [
+  "/assets/car1.jpg",
+  "/assets/car2.jpg",
+  "/assets/car3.jpg",
+];
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -15,12 +21,6 @@ export default function Login() {
   const [showForgotPassword, setShowForgotPassword] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Slideshow images
-  const imageList = [
-    "/assets/car1.jpg",
-    "/assets/car2.jpg",
-    "/assets/car3.jpg",
-  ];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -42,9 +42,9 @@ export default function Login() {
       localStorage.setItem("user", JSON.stringify(data));
 
       if (data.role === "admin") {
-        router.push(`/adminAgenda/${data.username}`);
+        router.push(`/admin-agenda/${data.username}`);
       } else {
-        router.push(`/trainingSection/${data.username}`);
+        router.push(`/trainingSection`);
       }
     } catch (error) {
       setLoginAttempts((prev) => {

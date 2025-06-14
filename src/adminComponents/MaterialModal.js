@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { createTopicWithMaterials } from "../../lib/api"; // sesuaikan path-nya
+
 
 export default function CreateTopicModal({ isOpen, onClose, token }) {
   // Consolidated form state
@@ -82,106 +84,46 @@ export default function CreateTopicModal({ isOpen, onClose, token }) {
     }));
   };
 
-  // Submit handler
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ 
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    // Validation
+  // Validasi
+  if (
+    !formData.title ||
+    !formData.level ||
+    !formData.idUser ||
+    !formData.duration ||
+    !formData.picture
+  ) {
+    alert("Semua field topik wajib diisi.");
+    return;
+  }
+
+  for (const material of formData.materials) {
     if (
-      !formData.title ||
-      !formData.level ||
-      !formData.idUser ||
-      !formData.duration ||
-      !formData.picture
+      !material.title ||
+      !material.urlLink ||
+      !material.overview ||
+      material.modules.length === 0
     ) {
-      alert("Semua field topik wajib diisi.");
+      alert("Semua field material wajib diisi.");
       return;
     }
+  }
 
-    // Validate each material
-    for (const material of formData.materials) {
-      if (
-        !material.title ||
-        !material.urlLink ||
-        !material.overview || // Added overview validation
-        material.modules.length === 0
-      ) {
-        alert("Semua field material wajib diisi.");
-        return;
-      }
-    }
-
-    setLoading(true);
-
-    try {
-      const authToken = localStorage.getItem("token") || token;
-      if (!authToken)
-        throw new Error("Token tidak ditemukan. Silakan login kembali.");
-
-      // 1. Create Topic
-      const topicForm = new FormData();
-      topicForm.append("title", formData.title);
-      topicForm.append("level", formData.level);
-      topicForm.append("id_user", formData.idUser);
-      topicForm.append("duration", formData.duration);
-      topicForm.append("picture", formData.picture);
-      topicForm.append("deadline", formData.deadline);
-
-      const topicRes = await fetch("http://localhost:3001/api/v1/topics", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${authToken}` },
-        body: topicForm,
-      });
-
-      if (!topicRes.ok) {
-        const errorData = await topicRes.json();
-        throw new Error(errorData.message || "Gagal membuat topik");
-      }
-
-      const topicData = await topicRes.json();
-      const topicId = topicData.data.id_topic;
-
-      // 2. Create Materials
-      const materialCreationPromises = formData.materials.map(
-        async (material) => {
-          const materialForm = new FormData();
-          materialForm.append("topicId", topicId);
-          materialForm.append("title", material.title);
-          materialForm.append("url_link", material.urlLink);
-          materialForm.append("overview", material.overview); // Changed from mark_done to overview
-          material.modules.forEach((module) =>
-            materialForm.append("module", module)
-          );
-
-          const materialRes = await fetch(
-            "http://localhost:3001/api/v1/materials",
-            {
-              method: "POST",
-              headers: { Authorization: `Bearer ${authToken}` },
-              body: materialForm,
-            }
-          );
-
-          if (!materialRes.ok) {
-            const errorData = await materialRes.json();
-            throw new Error(errorData.message || "Gagal membuat material");
-          }
-
-          return await materialRes.json();
-        }
-      );
-
-      await Promise.all(materialCreationPromises);
-
-      alert("✅ Topik dan Material berhasil dibuat!");
-      onClose();
-    } catch (error) {
-      console.error("Error:", error);
-      alert(`Gagal: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  try {
+    await createTopicWithMaterials(formData); // 👈 ini dia
+    alert("✅ Topik dan Material berhasil dibuat!");
+    onClose();
+  } catch (error) {
+    console.error("Error:", error);
+    alert(`Gagal: ${error.message}`);
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (!isOpen) return null;
 

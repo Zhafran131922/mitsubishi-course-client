@@ -37,8 +37,21 @@ const ProgramCard = ({ program, onDelete, onEdit, onClick }) => {
     }
   };
 
-  const handleCardClick = () => {
-    if (onClick) onClick(program);
+  const handleCardClick = (e) => {
+    // Hanya trigger onClick jika yang diklik bukan tombol
+    if (!e.target.closest('button')) {
+      onClick?.(program);
+    }
+  };
+
+    const handleEditClick = (e) => {
+    e.stopPropagation();
+    onEdit?.(program);
+  };
+
+  const handleDeleteClick = (e) => {
+    e.stopPropagation();
+    onDelete?.(program);
   };
 
   const getApplicationBadge = (app, key) => {
@@ -154,14 +167,14 @@ const ProgramCard = ({ program, onDelete, onEdit, onClick }) => {
         </div>
 
         <div className="mt-auto flex gap-2">
-          <button
-            onClick={() => onEdit(program)}
+         <button
+            onClick={handleEditClick}
             className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md font-medium transition flex items-center justify-center gap-2"
           >
             <Edit className="w-4 h-4" /> Edit
           </button>
-          <button
-            onClick={() => onDelete(program)}
+         <button
+            onClick={handleDeleteClick}
             className="flex-1 py-2 bg-red-100 hover:bg-red-200 text-red-800 rounded-md font-medium transition flex items-center justify-center gap-2"
           >
             <Trash2 className="w-4 h-4" /> Delete

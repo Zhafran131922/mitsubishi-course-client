@@ -45,7 +45,7 @@ const Sidebar = ({ onExpand }) => {
           return;
         }
 
-        const response = await fetch(`http://localhost:3001/api/v1/users/${userId}`, {
+        const response = await fetch(`https://duanol.mitsubishi-training.my.id/api/v1/users/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -61,7 +61,7 @@ const Sidebar = ({ onExpand }) => {
 
         // Set profile picture if available
         if (userData.profile?.profile_picture) {
-          const picturePath = `http://localhost:3001/uploads/${userData.profile.profile_picture.split("\\").pop()}`;
+          const picturePath = `https://duanol.mitsubishi-training.my.id/uploads/${userData.profile.profile_picture.split("/").pop()}`;
           setProfilePicture(picturePath);
         }
       } catch (error) {
@@ -115,25 +115,25 @@ const Sidebar = ({ onExpand }) => {
 
   const menuItems = [
     {
-      href: `/trainingSection/${user.username}`,
+      href: `/trainingSection`,
       icon: <FaHeart />,
       label: "Training Section",
       match: ["/trainingSection", "/courses"],
     },
     {
-      href: `/programOverview/${user.username}`,
+      href: `/programOverview`,
       icon: <FaCalendarAlt />,
       label: "Program Overview",
       match: ["/programOverview"],
     },
     {
-      href: `/corporateService/${user.username}`,
+      href: `/corporateService`,
       icon: <FaGem />,
       label: "Corporate Service",
       match: ["/corporateService"],
     },
     {
-      href: `/about/${user.username}`,
+      href: `/about`,
       icon: <FaCog />,
       label: "About",
       match: ["/about"],
@@ -224,7 +224,7 @@ const Sidebar = ({ onExpand }) => {
 
         {/* Bottom Section - Profile and Logout */}
         <div className="w-full px-4 space-y-4">
-          <Link href={`/profile/${user.username}`} className="flex items-center justify-center">
+          <Link href={`/profile`} className="flex items-center justify-center">
             <div
               className={`flex items-center ${
                 expanded

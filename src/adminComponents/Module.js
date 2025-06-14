@@ -10,7 +10,7 @@ const Module = ({ material }) => {
         const modulePath =
           item.module?.split("uploads\\")[1] ||
           item.module?.split("uploads/")[1];
-        const moduleUrl = `http://localhost:3001/uploads/${modulePath}`;
+        const moduleUrl = `https://duanol.mitsubishi-training.my.id/uploads/${modulePath}`;
 
         return (
           <div key={item.id} className="p-4 border rounded shadow">
