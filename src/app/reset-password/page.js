@@ -1,100 +1,177 @@
 "use client";
 
-import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useState, Suspense, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import Image from "next/image";
 
-export default function ResetPasswordPage() {
-  const { token } = useParams(); // ambil token dari URL
+function ResetPasswordContent() {
+  const [token, setToken] = useState(null);
   const router = useRouter();
-
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const tokenParam = urlParams.get('token') || queryString.split('?')[1];
+      setToken(tokenParam);
+    }
+  }, []);
 
-  if (password !== confirmPassword) {
-    setMessage("Passwords do not match.");
-    return;
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  setLoading(true);
-  setMessage("");
-
-  try {
-    const response = await fetch("https://duanol.mitsubishi-training.my.id/api/v1/auth/reset-password", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token,
-        newPassword: password,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "Failed to reset password.");
+    if (!token) {
+      setMessage("Invalid or missing reset token. Please check your reset link.");
+      return;
     }
 
-    setMessage("Password successfully changed. Redirecting to login...");
-    setTimeout(() => router.push("/login"), 3000);
-  } catch (error) {
-    setMessage(error.message);
-  } finally {
-    setLoading(false);
-  }
-};
+    if (password !== confirmPassword) {
+      setMessage("Passwords do not match.");
+      return;
+    }
 
+    setLoading(true);
+    setMessage("");
+
+    try {
+      const response = await fetch("https://duanol.mitsubishi-training.my.id/api/v1/auth/reset-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token,
+          newPassword: password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to reset password.");
+      }
+
+      setMessage("Password successfully changed. Redirecting to login...");
+      setTimeout(() => router.push("/login"), 3000);
+    } catch (error) {
+      setMessage(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl p-8 text-white">
-        <h2 className="text-3xl font-bold mb-6 text-center">Reset Password</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">New Password</label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 bg-white/20 border border-white/30 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-white/50"
-              placeholder="Enter new password"
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-800 to-black p-4">
+      <motion.div 
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        className="w-full max-w-md bg-white rounded-lg shadow-lg p-8"
+      >
+        <div className="text-center mb-8">
+          <div className="w-fit mx-auto mb-4">
+            <Image
+              src="/assets/logo.png"
+              alt="Mitsubishi Logo"
+              width={40}
+              height={40}
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Confirm Password</label>
-            <input
-              type="password"
-              required
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-2 bg-white/20 border border-white/30 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-white/50"
-              placeholder="Confirm new password"
-            />
+          <h1 className="text-2xl font-bold text-gray-800">
+            Reset Password
+          </h1>
+          <p className="text-sm text-gray-500 mt-2">
+            Enter your new password below
+          </p>
+        </div>
+
+        {token === null ? (
+          <div className="text-center text-gray-600">Loading token...</div>
+        ) : !token ? (
+          <div className="text-center">
+            <p className="text-red-500 mb-4">Invalid reset link format.</p>
+            <p className="text-sm text-gray-500 mb-4">
+              Please make sure your URL looks like:<br />
+              <code className="bg-gray-100 p-1 rounded text-xs">.../reset-password?token=YOUR_TOKEN</code>
+            </p>
+            <a 
+              href="/login" 
+              className="text-blue-500 hover:underline text-sm"
+            >
+              Back to login
+            </a>
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-500 transition-colors py-2 rounded-md font-semibold"
-          >
-            {loading ? "Submitting..." : "Reset Password"}
-          </button>
-        </form>
-        {message && (
-          <p className="mt-4 text-sm text-center text-yellow-300">{message}</p>
+        ) : (
+          <>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-sm"
+                  placeholder="Enter new password"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 text-sm"
+                  placeholder="Confirm new password"
+                />
+              </div>
+              
+              <motion.button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition text-sm"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {loading ? "Processing..." : "Reset Password"}
+              </motion.button>
+            </form>
+            
+            {message && (
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className={`mt-4 text-sm text-center ${
+                  message.includes("successfully") ? "text-green-600" : "text-red-600"
+                }`}
+              >
+                {message}
+              </motion.p>
+            )}
+          </>
         )}
-        <p className="mt-6 text-center text-sm text-white/60">
-          <a href="/login" className="text-blue-400 hover:underline">
-            Back to login
-          </a>
-        </p>
-      </div>
+      </motion.div>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-800 to-black">
+        <div className="text-white">Loading reset password form...</div>
+      </div>
+    }>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }

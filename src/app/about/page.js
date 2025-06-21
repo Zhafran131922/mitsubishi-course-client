@@ -43,10 +43,10 @@ const AboutUs = () => {
         >
           {/* About Section */}
           <motion.div 
-            className="max-w-4xl w-full text-center"
+            className="max-w-4xl w-full text-center mt-20 lg:mt-0"
             variants={container}
           >
-            <motion.h1 className="text-4xl font-bold" variants={item}>
+            <motion.h1 className="text-4xl font-bold " variants={item}>
               About Mitsubishi Training
             </motion.h1>
             <motion.p className="text-gray-600 max-w-2xl mx-auto mt-4 text-sm sm:text-base" variants={item}>
@@ -79,7 +79,7 @@ const AboutUs = () => {
               variants={imageItem}
             >
               <Image 
-                src="/assets/car3.jpg" 
+                src="/assets/car4.jpg" 
                 alt="Mitsubishi Training Values" 
                 width={560} 
                 height={350} 
@@ -163,7 +163,7 @@ const AboutUs = () => {
               variants={imageItem}
             >
               <Image 
-                src="/assets/login.jpg" 
+                src="/assets/car5.jpg" 
                 alt="Training Support" 
                 width={400} 
                 height={300} 

@@ -27,7 +27,7 @@ const TrainCard = ({ title, author, level, duration, image, onNavigate }) => (
     </div>
     <div className="p-4 flex flex-col">
       <div className="flex items-center gap-1 text-gray-700 text-sm">
-        <span>By {author || "Unknown Author"}</span>
+        <span>By Trainer</span>
         <CheckCircle className="text-green-500 w-4 h-4" />
       </div>
       <h2 className="text-lg font-bold mt-4">{title}</h2>

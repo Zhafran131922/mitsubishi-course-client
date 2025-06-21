@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getMaterialsAndTopics } from "../../lib/api";
 import { createQuiz } from "../../lib/api";
+import Swal from "sweetalert2";
 
 const QuizModal = ({ isOpen, onClose, onSave }) => {
   const [idMaterial, setIdMaterial] = useState("");
@@ -77,151 +78,306 @@ const QuizModal = ({ isOpen, onClose, onSave }) => {
     e.preventDefault();
 
     if (!idMaterial) {
-      alert("Pilih materi terlebih dahulu");
+      Swal.fire({
+        title: "Peringatan",
+        text: "Pilih materi terlebih dahulu",
+        icon: "warning",
+        confirmButtonColor: "#A70000",
+      });
       return;
     }
 
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Anda harus login terlebih dahulu");
+      Swal.fire({
+        title: "Peringatan",
+        text: "Anda harus login terlebih dahulu",
+        icon: "warning",
+        confirmButtonColor: "#A70000",
+      });
       return;
     }
 
     try {
+      // Validate all questions first
       for (const q of questions) {
         if (!q.question || q.answers.some((a) => !a.answer)) {
-          alert("Lengkapi semua pertanyaan dan jawaban terlebih dahulu");
+          Swal.fire({
+            title: "Peringatan",
+            text: "Lengkapi semua pertanyaan dan jawaban terlebih dahulu",
+            icon: "warning",
+            confirmButtonColor: "#A70000",
+          });
           return;
         }
 
         if (!q.answers.some((a) => a.isCorrect)) {
-          alert("Setiap soal harus memiliki jawaban benar");
+          Swal.fire({
+            title: "Peringatan",
+            text: "Setiap soal harus memiliki jawaban benar",
+            icon: "warning",
+            confirmButtonColor: "#A70000",
+          });
           return;
         }
+      }
 
-        await createQuiz(
+      // Show confirmation dialog
+      const confirmResult = await Swal.fire({
+        title: "Konfirmasi",
+        text: `Apakah Anda yakin ingin membuat ${questions.length} kuis?`,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#A70000",
+        cancelButtonColor: "#6b7280",
+        confirmButtonText: "Ya, Buat Kuis",
+        cancelButtonText: "Batal",
+      });
+
+      if (!confirmResult.isConfirmed) return;
+
+      // Create all quizzes
+      const creationPromises = questions.map((q) =>
+        createQuiz(
           {
             question: q.question,
             idMaterial,
             answers: q.answers,
           },
           token
-        );
-      }
+        )
+      );
 
-      alert("✅ Semua quiz berhasil dibuat!");
+      await Promise.all(creationPromises);
+
+      // Show success message
+      await Swal.fire({
+        title: "Berhasil!",
+        text: `Berhasil membuat ${questions.length} kuis`,
+        icon: "success",
+        confirmButtonColor: "#A70000",
+      });
+
+      // Reset form and close
       setIdMaterial("");
       setQuestions([]);
       onClose();
       if (typeof onSave === "function") onSave();
     } catch (err) {
       console.error("Submit error:", err);
-      alert(err.message || "Terjadi kesalahan saat menyimpan quiz");
+      Swal.fire({
+        title: "Gagal!",
+        text: err.message || "Terjadi kesalahan saat menyimpan kuis",
+        icon: "error",
+        confirmButtonColor: "#A70000",
+      });
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 overflow-y-auto">
-      <div className="bg-white p-6 rounded shadow w-full max-w-3xl">
-        <h2 className="text-xl font-bold mb-4">Tambah Quiz</h2>
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 overflow-y-auto p-4">
+      <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">Tambah Quiz Baru</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 focus:outline-none"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
 
-        <div className="mb-4">
-          <label className="block mb-2 font-medium">Materi</label>
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Materi
+          </label>
           {loadingMaterials ? (
-            <p>Memuat daftar materi...</p>
+            <div className="animate-pulse flex space-x-4">
+              <div className="flex-1 py-2 bg-gray-200 rounded"></div>
+            </div>
           ) : (
             <select
               value={idMaterial}
               onChange={(e) => setIdMaterial(e.target.value)}
-              className="w-full border p-2 rounded"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               required
             >
               <option value="">-- Pilih Materi --</option>
               {materials.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.title} - {getTopicName(m.idTopic)}{" "}
-                  {/* Menampilkan judul materi dan nama topic */}
+                <option key={m.id} value={m.id} className="py-1">
+                  {m.title} - {getTopicName(m.idTopic)}
                 </option>
               ))}
             </select>
           )}
         </div>
 
-        <div className="flex gap-4 mb-4">
+        <div className="flex gap-4 mb-6">
           <button
             type="button"
             onClick={() => addQuestion("multiple")}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors shadow"
           >
-            + Pilihan Ganda
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Pilihan Ganda
           </button>
           <button
             type="button"
             onClick={() => addQuestion("truefalse")}
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors shadow"
           >
-            + True/False
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+                clipRule="evenodd"
+              />
+            </svg>
+            True/False
           </button>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {questions.length === 0 && (
+            <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="mx-auto h-12 w-12 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1}
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+              <h3 className="mt-2 text-sm font-medium text-gray-900">
+                Belum ada pertanyaan
+              </h3>
+              <p className="mt-1 text-sm text-gray-500">
+                Tambahkan pertanyaan menggunakan tombol di atas
+              </p>
+            </div>
+          )}
+
           {questions.map((q, qIndex) => (
             <div
               key={qIndex}
-              className="border p-4 rounded mb-4 relative bg-gray-50"
+              className="border border-gray-200 p-5 rounded-lg mb-4 relative bg-white shadow-sm hover:shadow-md transition-shadow"
             >
-              <button
-                type="button"
-                onClick={() => deleteQuestion(qIndex)}
-                className="absolute top-2 right-2 text-red-500 hover:text-red-700"
-              >
-                Hapus
-              </button>
-              <label className="block mb-2 font-semibold">
+              <div className="absolute top-3 right-3 flex space-x-2">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  {q.type === "multiple" ? "Pilihan Ganda" : "True/False"}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => deleteQuestion(qIndex)}
+                  className="text-gray-400 hover:text-red-500 focus:outline-none"
+                  title="Hapus pertanyaan"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Pertanyaan {qIndex + 1}
               </label>
               <input
                 type="text"
                 value={q.question}
                 onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
-                className="w-full border p-2 rounded mb-3"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Masukkan pertanyaan"
               />
 
-              <div className="space-y-2">
+              <div className="mt-4 space-y-3">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Jawaban:
+                </label>
                 {q.answers.map((a, aIndex) => (
-                  <div key={aIndex} className="flex items-center gap-2">
-                    {q.type === "multiple" && (
+                  <div key={aIndex} className="flex items-center gap-3">
+                    <div
+                      className={`flex-1 ${
+                        q.type === "multiple"
+                          ? ""
+                          : "px-3 py-2 bg-gray-50 rounded"
+                      }`}
+                    >
+                      {q.type === "multiple" ? (
+                        <input
+                          type="text"
+                          value={a.answer}
+                          onChange={(e) =>
+                            handleAnswerChange(
+                              qIndex,
+                              aIndex,
+                              "answer",
+                              e.target.value
+                            )
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder={`Jawaban ${aIndex + 1}`}
+                        />
+                      ) : (
+                        <span className="text-gray-700">{a.answer}</span>
+                      )}
+                    </div>
+                    <label className="inline-flex items-center">
                       <input
-                        type="text"
-                        value={a.answer}
-                        onChange={(e) =>
-                          handleAnswerChange(
-                            qIndex,
-                            aIndex,
-                            "answer",
-                            e.target.value
-                          )
-                        }
-                        className="flex-1 border p-2 rounded"
-                        placeholder={`Jawaban ${aIndex + 1}`}
-                      />
-                    )}
-                    {q.type === "truefalse" && (
-                      <span className="flex-1">{a.answer}</span>
-                    )}
-                    <label className="flex items-center gap-1 text-sm">
-                      <input
-                        type="checkbox"
+                        type="radio"
+                        name={`correct-answer-${qIndex}`}
                         checked={a.isCorrect}
                         onChange={() =>
                           handleAnswerChange(qIndex, aIndex, "isCorrect", true)
                         }
-                        className="h-4 w-4"
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
                       />
-                      Benar
+                      <span className="ml-2 text-sm text-gray-700">Benar</span>
                     </label>
                   </div>
                 ))}
@@ -229,18 +385,18 @@ const QuizModal = ({ isOpen, onClose, onSave }) => {
             </div>
           ))}
 
-          <div className="flex justify-end mt-4 gap-2">
+          <div className="flex justify-end mt-6 gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Batal
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-              disabled={loadingMaterials}
+              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
+              disabled={loadingMaterials || questions.length === 0}
             >
               Simpan Semua Quiz
             </button>

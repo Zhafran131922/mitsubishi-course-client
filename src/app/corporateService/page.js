@@ -52,7 +52,7 @@ const CorporateService = () => {
       >
         {/* Header Section */}
         <motion.div
-          className="flex flex-col items-start mb-12"
+          className="max-w-4xl w-full text-center mt-20 lg:mt-0"
           initial="hidden"
           animate="visible"
           variants={container}
@@ -94,7 +94,7 @@ const CorporateService = () => {
           transition={{ delay: 0.3, duration: 0.7 }}
         >
           <Image
-            src="/assets/car1.jpg"
+            src="/assets/login.jpg"
             alt="Team Training Session"
             fill
             className="object-cover"
@@ -245,11 +245,6 @@ const ServiceCard = ({
           className="mt-auto flex items-center gap-2 text-[#A70000] font-medium group-hover:text-[#d32f2f] transition-colors"
           whileHover={{ x: 3 }}
         >
-          <span>View details</span>
-          <ArrowUpRight
-            size={16}
-            className="group-hover:translate-x-1 transition-transform"
-          />
         </motion.button>
       </div>
     </motion.div>

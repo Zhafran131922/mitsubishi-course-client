@@ -1,19 +1,19 @@
 "use client";
 
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { fetchProgramById } from "../../../lib/api";
 import Sidebar from "@/components/Sidebar";
 import Image from "next/image";
+import { Suspense } from "react";
 
-// Move the main content to a separate component
-const ProgramDetailContent = () => {
+const AdminPageProgramContent = () => {
   const [program, setProgram] = useState(null);
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
   const programId = searchParams.get("id");
-  const [imgSrc, setImgSrc] = useState("/default-image.jpg");
+  const [imgSrc, setImgSrc] = useState(program?.image || "");
 
   useEffect(() => {
     async function loadProgram() {
@@ -22,12 +22,6 @@ const ProgramDetailContent = () => {
       try {
         const data = await fetchProgramById(programId);
         if (data) {
-          const imageUrl = data.content
-            ? `https://duanol.mitsubishi-training.my.id/uploads/${data.content
-                .split("/")
-                .pop()}`
-            : "/default-image.jpg";
-          
           setProgram({
             id: data.id,
             title: data.title,
@@ -39,11 +33,21 @@ const ProgramDetailContent = () => {
             platform: data.platform,
             jenis_program: data.jenis_program,
             url_link: data.url_link,
-            image: imageUrl,
+            image: data.content
+              ? `https://duanol.mitsubishi-training.my.id/uploads/${data.content
+                  .split("/")
+                  .pop()}`
+              : "/default-image.jpg",
             createdAt: data.createdAt,
             updatedAt: data.updatedAt,
           });
-          setImgSrc(imageUrl);
+          setImgSrc(
+            data.content
+              ? `https://duanol.mitsubishi-training.my.id/uploads/${data.content
+                  .split("/")
+                  .pop()}`
+              : "/default-image.jpg"
+          );
         }
       } catch (error) {
         console.error("Failed to load program:", error);
@@ -108,7 +112,6 @@ const ProgramDetailContent = () => {
               </button>
             </div>
 
-            {/* Program Image */}
             <div className="rounded-xl overflow-hidden shadow-lg mb-8 border border-gray-200">
               <Image
                 src={imgSrc}
@@ -157,7 +160,105 @@ const ProgramDetailContent = () => {
 
               {/* Program Details */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                {/* ... rest of your content remains the same ... */}
+                <div className="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                  <h3 className="font-medium text-gray-700 mb-3 text-lg">
+                    Informasi Waktu
+                  </h3>
+                  <div className="space-y-2">
+                    <div>
+                      <p className="text-sm text-gray-500">Tanggal</p>
+                      <p className="text-gray-800 font-medium">
+                        {new Date(program.date_program).toLocaleDateString(
+                          "id-ID",
+                          {
+                            weekday: "long",
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          }
+                        )}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Waktu</p>
+                      <p className="text-gray-800 font-medium">
+                        {formatTime(program.time_program) || "Tidak ditentukan"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Durasi</p>
+                      <p className="text-gray-800 font-medium">
+                        {formatDuration(program.duration) || "Tidak ditentukan"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                  <h3 className="font-medium text-gray-700 mb-3 text-lg">
+                    Informasi Teknis
+                  </h3>
+                  <div className="space-y-2">
+                    <div>
+                      <p className="text-sm text-gray-500">Platform</p>
+                      <p className="text-gray-800 font-medium">
+                        {program.platform || "Tidak ditentukan"}
+                      </p>
+                    </div>
+                    {program.status === "online" && (
+                      <div>
+                        <p className="text-sm text-gray-500">Link</p>
+                        <p className="text-gray-800 font-medium">
+                          {program.url_link ? (
+                            <a
+                              href={
+                                program.url_link.startsWith("https")
+                                  ? program.url_link
+                                  : `https://${program.url_link}`
+                              }
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-red-600 hover:underline"
+                            >
+                              Click here!
+                            </a>
+                          ) : (
+                            "Tidak tersedia"
+                          )}
+                        </p>
+                      </div>
+                    )}
+                    <div>
+                      <p className="text-sm text-gray-500">Dibuat pada</p>
+                      <p className="text-gray-800 font-medium">
+                        {new Date(program.createdAt).toLocaleDateString(
+                          "id-ID",
+                          {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional Metadata */}
+              <div className="pt-6 border-t border-gray-200">
+                <div className="flex flex-wrap justify-between text-sm text-gray-500">
+                  <p>
+                    Terakhir diperbarui:{" "}
+                    {new Date(program.updatedAt).toLocaleDateString("id-ID", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -196,11 +297,10 @@ const ProgramDetailContent = () => {
   );
 };
 
-// Main component that wraps the content in Suspense
 const AdminPageProgram = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <ProgramDetailContent />
+      <AdminPageProgramContent />
     </Suspense>
   );
 };

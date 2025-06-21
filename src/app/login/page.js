@@ -8,9 +8,9 @@ import { login } from "../../../lib/api";
 
 // Slideshow images
 const imageList = [
-  "/assets/car1.jpg",
-  "/assets/car2.jpg",
-  "/assets/car3.jpg",
+  "/assets/mitsubishi1.jpg",
+  "/assets/mitsubishi2.jpg",
+  "/assets/mitsubishi3.jpg",
 ];
 export default function Login() {
   const router = useRouter();
@@ -42,7 +42,7 @@ export default function Login() {
       localStorage.setItem("user", JSON.stringify(data));
 
       if (data.role === "admin") {
-        router.push(`/admin-agenda/${data.username}`);
+        router.push(`/admin-agenda`);
       } else {
         router.push(`/trainingSection`);
       }
@@ -130,7 +130,7 @@ export default function Login() {
               Training Center
             </h1>
             <p className="text-xs sm:text-sm text-gray-500 mt-2">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit
+               The official Mitsubishi training center to enhance your technical skills and knowledge.
             </p>
           </motion.div>
 

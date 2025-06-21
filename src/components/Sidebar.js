@@ -301,7 +301,7 @@ const Sidebar = ({ onExpand }) => {
           <span className="text-sm font-semibold">Mitsubishi Course</span>
         </div>
 
-        <Link href={`/profile/${user.username}`} className="flex items-center">
+        <Link href={`/profile/`} className="flex items-center">
           <div className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-white flex items-center justify-center">
             {renderProfileImage()}
           </div>
@@ -352,7 +352,7 @@ const Sidebar = ({ onExpand }) => {
               {/* User Profile Section */}
               <div className="mt-8 border-t border-gray-700 pt-4">
                 <Link
-                  href={`/profile/${user.username}`}
+                  href={`/profile/`}
                   onClick={() => setIsOpen(false)}
                   className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition"
                 >

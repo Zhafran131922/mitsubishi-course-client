@@ -46,16 +46,17 @@ const Sidebar = ({ onExpand }) => {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token"); 
     router.push("/login");
   };
 
   if (!user) return null;
 
   const menuItems = [
-    { href: "/admin-agenda/admin", icon: <FaClipboardList />, label: "Agenda" },
+    { href: "/admin-agenda", icon: <FaClipboardList />, label: "Agenda" },
     { href: "/admin-program/admin", icon: <FaFilm />, label: "Program" },
-    { href: "/admin-material/admin", icon: <FaHeadset />, label: "Material" },
-    { href: "/management-users/admin", icon: <FaInfoCircle />, label: "Task" },
+    { href: "/admin-material", icon: <FaHeadset />, label: "Material" },
+    { href: "/management-users/admin", icon: <FaInfoCircle />, label: "Management Users" },
   ];
 
   return (
@@ -195,11 +196,6 @@ const Sidebar = ({ onExpand }) => {
           <span className="text-sm font-semibold">Mitsubishi Course</span>
         </div>
 
-        <Link href="/profile" className="flex items-center">
-          <div className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-white">
-            <Image src={User} alt="Profile" fill className="object-cover" />
-          </div>
-        </Link>
       </div>
 
       {/* Enhanced Mobile Sidebar */}

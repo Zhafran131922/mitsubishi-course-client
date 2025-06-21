@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { useState } from "react";
 import Overview from "./Overview";
 import Module from "./Module";
@@ -17,7 +17,9 @@ const CourseContentSection = ({ material }) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   // Tambahkan validasi untuk material
-  const currentMaterial = Array.isArray(material) ? material : [material].filter(Boolean);
+  const currentMaterial = Array.isArray(material)
+    ? material
+    : [material].filter(Boolean);
 
   const nextTab = () => {
     const nextIndex = (activeIndex + 1) % tabs.length;
@@ -39,9 +41,10 @@ const CourseContentSection = ({ material }) => {
           <button
             key={item.key}
             className={`px-3 sm:px-4 py-2 text-sm sm:text-lg font-bold transition rounded-md 
-              ${activePage === item.key
-                ? "bg-red-700 text-white"
-                : "bg-transparent text-black hover:bg-red-700 hover:text-white"
+              ${
+                activePage === item.key
+                  ? "bg-red-700 text-white"
+                  : "bg-transparent text-black hover:bg-red-700 hover:text-white"
               }`}
             onClick={() => {
               setActivePage(item.key);
@@ -55,25 +58,33 @@ const CourseContentSection = ({ material }) => {
 
       {/* Tombol Navigasi untuk Mobile */}
       <div className="sm:hidden flex items-center justify-center gap-4 p-2">
-        <button onClick={prevTab} className="px-4 py-2 bg-gray-300 text-black font-bold rounded-md">
+        <button
+          onClick={prevTab}
+          className="px-4 py-2 bg-gray-300 text-black font-bold rounded-md"
+        >
           ←
         </button>
         <button className="px-4 py-2 bg-red-700 text-white font-bold rounded-md">
           {tabs[activeIndex].name}
         </button>
-        <button onClick={nextTab} className="px-4 py-2 bg-gray-300 text-black font-bold rounded-md">
+        <button
+          onClick={nextTab}
+          className="px-4 py-2 bg-gray-300 text-black font-bold rounded-md"
+        >
           →
         </button>
       </div>
 
       {/* Konten */}
       <div className="bg-white w-full min-h-[300px] p-4 sm:p-5 mt-2 rounded-lg shadow-lg overflow-auto">
-        {activePage === "overview" && <Overview />}
+        {activePage === "overview" && (
+          <Overview material={currentMaterial[0]} />
+        )}
         {activePage === "course" && <Module material={currentMaterial} />}
         {activePage === "quiz" && currentMaterial[0] && (
           <QuizSection material={currentMaterial[0]} />
         )}
-       {activePage === "review" && <Review material={currentMaterial[0]} />}
+        {activePage === "review" && <Review material={currentMaterial[0]} />}
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import Module from "./Module";
 import Review from "./Review";
 import QuizSection from "./Quiz";
 
+
 const tabs = [
   { name: "Overview", key: "overview" },
   { name: "Modul", key: "course" },
