@@ -208,7 +208,7 @@ const Calendar = () => {
     if (event.type === "deadline") {
       router.push(`/courses/topicId?id=${event.id}`);
     } else {
-      router.push(`/programDetail?id=${event.id}`);
+      router.push(`/program-detail?id=${event.id}`);
     }
   };
 

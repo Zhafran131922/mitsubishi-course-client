@@ -16,6 +16,7 @@ import {
   FaTimes,
   FaSignOutAlt,
   FaUserCircle,
+  FaBook,
 } from "react-icons/fa";
 import Logo from "../../public/assets/logo.png";
 
@@ -115,22 +116,28 @@ const Sidebar = ({ onExpand }) => {
 
   const menuItems = [
     {
-      href: `/trainingSection`,
+      href: `/training-section`,
       icon: <FaHeart />,
       label: "Training Section",
-      match: ["/trainingSection", "/courses"],
+      match: ["/training-section",],
     },
     {
-      href: `/programOverview`,
+      href: `/material`,
+      icon: <FaBook />,
+      label: "Material Section",
+      match: ["/material", "/courses"],
+    },
+    {
+      href: `/program-overview`,
       icon: <FaCalendarAlt />,
       label: "Program Overview",
-      match: ["/programOverview"],
+      match: ["/program-overview", "/program-detail"],
     },
     {
-      href: `/corporateService`,
+      href: `/corporate-service`,
       icon: <FaGem />,
       label: "Corporate Service",
-      match: ["/corporateService"],
+      match: ["/corporate-service"],
     },
     {
       href: `/about`,
@@ -142,7 +149,6 @@ const Sidebar = ({ onExpand }) => {
 
   return (
     <>
-      {/* Desktop Sidebar */}
       <div
         className={`hidden lg:flex ml-5 flex-col ${
           expanded ? "w-64" : "w-20"

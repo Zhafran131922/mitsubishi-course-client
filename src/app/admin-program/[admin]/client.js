@@ -281,7 +281,7 @@ const AdminProgram = () => {
               {/* Mobile - Floating Button (icon only) */}
               <button
                 onClick={handleAddNew}
-                className="sm:hidden p-4 bg-[#A70000] text-white rounded-full shadow-lg hover:bg-red-600 transition-colors duration-300 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="sm:hidden p-4 bg-white text-[#A70000] rounded-full shadow-lg hover:bg-gray-300 shadow-md transition-colors duration-300 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-red-500"
                 aria-label="Add Program"
               >
                 <svg

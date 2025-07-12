@@ -9,7 +9,7 @@ import {
   FiUser,
   FiBook,
   FiBookmark,
-  FiLayers
+  FiLayers,
 } from "react-icons/fi";
 import { format, addWeeks, subWeeks } from "date-fns";
 import WelcomeAdmin from "../../adminComponents/WelcomeAdmin";
@@ -106,7 +106,7 @@ const AdminAgenda = () => {
 
         {/* Mobile Sidebar Offset */}
         <div className="max-w-4xl w-full text-center mt-2 lg:mt-0"></div>
-               <div className="flex items-center mb-6">
+        <div className="flex items-center mb-6">
           <span className="bg-black text-white px-4 py-2 text-sm font-bold transform -skew-x-12">
             ☰ Admin Pages
           </span>
@@ -121,95 +121,119 @@ const AdminAgenda = () => {
             <WelcomeAdmin />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
-              {/* Users Card */}
-              <motion.div 
-                className="bg-white p-4 rounded-xl shadow-md border border-gray-100 h-32 lg:h-40 flex flex-col cursor-pointer hover:shadow-lg transition-all"
+              <motion.div
+                className="bg-white p-4 rounded-xl shadow-md border border-gray-100 h-32 lg:h-40 flex flex-col cursor-pointer hover:shadow-lg transition-all relative overflow-hidden group"
                 onClick={() => navigateTo("/management-users/admin")}
                 whileHover={{ y: -5 }}
               >
-                <div className="flex items-center mb-2">
-                  <div className="p-2 rounded-lg bg-red-50 mr-3">
-                    <FiUser className="text-[#A70000]" size={20} />
+                {/* Gradient overlay (hidden by default) */}
+                <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-[#A70000] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></div>
+
+                <div className="flex items-center mb-2 z-10">
+                  <div className="p-2 rounded-lg bg-red-50 mr-3 group-hover:bg-white/20 transition-colors">
+                    <FiUser
+                      className="text-[#A70000] group-hover:text-white transition-colors"
+                      size={20}
+                    />
                   </div>
-                  <h3 className="text-gray-500 text-sm font-medium">Total Users</h3>
+                  <h3 className="text-gray-500 text-sm font-medium group-hover:text-white transition-colors">
+                    Total Users
+                  </h3>
                 </div>
-                <div className="flex-1 flex flex-col justify-center">
-                  <p className="text-2xl lg:text-3xl font-bold text-gray-800">
+                <div className="flex-1 flex flex-col justify-center z-10">
+                  <p className="text-2xl lg:text-3xl font-bold text-gray-800 group-hover:text-white transition-colors">
                     {stats.userCount}
                   </p>
-                  <p className="text-gray-400 text-xs mt-1">Registered users</p>
-                </div>
-                <div className="text-right">
-                  <span className="text-[#A70000] text-xs font-medium">View all →</span>
+                  <p className="text-gray-400 text-xs mt-1 group-hover:text-white/80 transition-colors">
+                    Registered users
+                  </p>
                 </div>
               </motion.div>
 
               {/* Topics Card */}
-              <motion.div 
-                className="bg-white p-4 rounded-xl shadow-md border border-gray-100 h-32 lg:h-40 flex flex-col cursor-pointer hover:shadow-lg transition-all"
-                onClick={() => navigateTo("/admin-material/admin")}
+              <motion.div
+                className="bg-white p-4 rounded-xl shadow-md border border-gray-100 h-32 lg:h-40 flex flex-col cursor-pointer hover:shadow-lg transition-all relative overflow-hidden group"
+                onClick={() => navigateTo("/admin-material")}
                 whileHover={{ y: -5 }}
               >
-                <div className="flex items-center mb-2">
-                  <div className="p-2 rounded-lg bg-red-50 mr-3">
-                    <FiBookmark className="text-[#A70000]" size={20} />
+                <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-[#A70000] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></div>
+
+                <div className="flex items-center mb-2 z-10">
+                  <div className="p-2 rounded-lg bg-red-50 mr-3 group-hover:bg-white/20 transition-colors">
+                    <FiBookmark
+                      className="text-[#A70000] group-hover:text-white transition-colors"
+                      size={20}
+                    />
                   </div>
-                  <h3 className="text-gray-500 text-sm font-medium">Total Topics</h3>
+                  <h3 className="text-gray-500 text-sm font-medium group-hover:text-white transition-colors">
+                    Total Topics
+                  </h3>
                 </div>
-                <div className="flex-1 flex flex-col justify-center">
-                  <p className="text-2xl lg:text-3xl font-bold text-gray-800">
+                <div className="flex-1 flex flex-col justify-center z-10">
+                  <p className="text-2xl lg:text-3xl font-bold text-gray-800 group-hover:text-white transition-colors">
                     {stats.topicCount}
                   </p>
-                  <p className="text-gray-400 text-xs mt-1">Available topics</p>
-                </div>
-                <div className="text-right">
-                  <span className="text-[#A70000] text-xs font-medium">View all →</span>
+                  <p className="text-gray-400 text-xs mt-1 group-hover:text-white/80 transition-colors">
+                    Available topics
+                  </p>
                 </div>
               </motion.div>
 
               {/* Programs Card */}
-              <motion.div 
-                className="bg-white p-4 rounded-xl shadow-md border border-gray-100 h-32 lg:h-40 flex flex-col cursor-pointer hover:shadow-lg transition-all"
+              <motion.div
+                className="bg-white p-4 rounded-xl shadow-md border border-gray-100 h-32 lg:h-40 flex flex-col cursor-pointer hover:shadow-lg transition-all relative overflow-hidden group"
                 onClick={() => navigateTo("/admin-program/admin")}
                 whileHover={{ y: -5 }}
               >
-                <div className="flex items-center mb-2">
-                  <div className="p-2 rounded-lg bg-red-50 mr-3">
-                    <FiBook className="text-[#A70000]" size={20} />
+                <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-[#A70000] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></div>
+
+                <div className="flex items-center mb-2 z-10">
+                  <div className="p-2 rounded-lg bg-red-50 mr-3 group-hover:bg-white/20 transition-colors">
+                    <FiBook
+                      className="text-[#A70000] group-hover:text-white transition-colors"
+                      size={20}
+                    />
                   </div>
-                  <h3 className="text-gray-500 text-sm font-medium">Total Programs</h3>
+                  <h3 className="text-gray-500 text-sm font-medium group-hover:text-white transition-colors">
+                    Total Programs
+                  </h3>
                 </div>
-                <div className="flex-1 flex flex-col justify-center">
-                  <p className="text-2xl lg:text-3xl font-bold text-gray-800">
+                <div className="flex-1 flex flex-col justify-center z-10">
+                  <p className="text-2xl lg:text-3xl font-bold text-gray-800 group-hover:text-white transition-colors">
                     {stats.programCount}
                   </p>
-                  <p className="text-gray-400 text-xs mt-1">Learning programs</p>
-                </div>
-                <div className="text-right">
-                  <span className="text-[#A70000] text-xs font-medium">View all →</span>
+                  <p className="text-gray-400 text-xs mt-1 group-hover:text-white/80 transition-colors">
+                    Learning programs
+                  </p>
                 </div>
               </motion.div>
 
               {/* Materials Card */}
-              <motion.div 
-                className="bg-white p-4 rounded-xl shadow-md border border-gray-100 h-32 lg:h-40 flex flex-col cursor-pointer hover:shadow-lg transition-all"
+              <motion.div
+                className="bg-white p-4 rounded-xl shadow-md border border-gray-100 h-32 lg:h-40 flex flex-col cursor-pointer hover:shadow-lg transition-all relative overflow-hidden group"
                 onClick={() => navigateTo("/admin-material")}
                 whileHover={{ y: -5 }}
               >
-                <div className="flex items-center mb-2">
-                  <div className="p-2 rounded-lg bg-red-50 mr-3">
-                    <FiLayers className="text-[#A70000]" size={20} />
+                <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-[#A70000] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></div>
+
+                <div className="flex items-center mb-2 z-10">
+                  <div className="p-2 rounded-lg bg-red-50 mr-3 group-hover:bg-white/20 transition-colors">
+                    <FiLayers
+                      className="text-[#A70000] group-hover:text-white transition-colors"
+                      size={20}
+                    />
                   </div>
-                  <h3 className="text-gray-500 text-sm font-medium">Total Materials</h3>
+                  <h3 className="text-gray-500 text-sm font-medium group-hover:text-white transition-colors">
+                    Total Materials
+                  </h3>
                 </div>
-                <div className="flex-1 flex flex-col justify-center">
-                  <p className="text-2xl lg:text-3xl font-bold text-gray-800">
+                <div className="flex-1 flex flex-col justify-center z-10">
+                  <p className="text-2xl lg:text-3xl font-bold text-gray-800 group-hover:text-white transition-colors">
                     {stats.materialCount}
                   </p>
-                  <p className="text-gray-400 text-xs mt-1">Learning materials</p>
-                </div>
-                <div className="text-right">
-                  <span className="text-[#A70000] text-xs font-medium">View all →</span>
+                  <p className="text-gray-400 text-xs mt-1 group-hover:text-white/80 transition-colors">
+                    Learning materials
+                  </p>
                 </div>
               </motion.div>
             </div>
@@ -268,16 +292,14 @@ const AdminAgenda = () => {
                     <FiCalendar className="text-[#A70000]" size={18} />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">
-                      Date & Time
-                    </p>
+                    <p className="text-sm text-gray-500">Date & Time</p>
                     <p className="font-medium text-gray-800">
                       {selectedSchedule.date} at 2:00 PM
                     </p>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-gray-200">
+                <div className="pt-4 border-t border-gray--material/adm200">
                   <button className="w-full bg-[#A70000] text-white py-2 rounded-lg font-medium hover:bg-[#900000] transition shadow-md">
                     View Full Details
                   </button>

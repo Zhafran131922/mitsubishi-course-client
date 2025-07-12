@@ -44,7 +44,7 @@ export default function Login() {
       if (data.role === "admin") {
         router.push(`/admin-agenda`);
       } else {
-        router.push(`/trainingSection`);
+        router.push(`/training-section`);
       }
     } catch (error) {
       setLoginAttempts((prev) => {
